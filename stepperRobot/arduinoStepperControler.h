@@ -32,7 +32,8 @@ class StepperControler
 		~StepperControler() {}
 
 		static void init();
-			
+		static void enableMotor(bool enable);
+	
 		static void setMotorSpeed(int i, int16_t tspeed);
 		
 		static void setPinMotorStep(int i, int8_t p) {pinMotorStep[i]=p;}

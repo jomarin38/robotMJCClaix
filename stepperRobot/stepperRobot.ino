@@ -5,6 +5,7 @@
 #include "RCControl.h"
 #define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
 #define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
+#define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
 RCControl control;
 Robot r;
 
@@ -87,7 +88,10 @@ void loop()
   if (commande_led > 1800)digitalWrite(CDE_RELAIS, HIGH);
   if (commande_led < 1100)digitalWrite(CDE_RELAIS, LOW);
 
-  r.setMovingSpeeds(
+  if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
+  if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
+
+r.setMovingSpeeds(
     throttle,
     steering
   );

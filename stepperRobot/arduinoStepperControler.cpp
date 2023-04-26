@@ -92,6 +92,17 @@ StepperControler::StepperControler()
 	
 }
 
+void StepperControler::enableMotor(bool enable)
+{
+  if(enable ==true)
+  {
+    digitalWrite(MOTORENABLE, LOW);  // enable motors
+     
+  }else{
+    digitalWrite(MOTORENABLE, HIGH);  // disable motors
+    
+  }
+}
 void StepperControler::init()
 {
 	pinMotorDir[0] = 13;
@@ -110,8 +121,8 @@ void StepperControler::init()
 	pinMode(pinMotorDir[1], OUTPUT); // DIR MOTOR 2  
 
 	pinMode(MOTORENABLE, OUTPUT);  // motor enable pin 
-	digitalWrite(MOTORENABLE, HIGH);  // disable motors
-	
+	//digitalWrite(MOTORENABLE, HIGH);  // disable motors
+	enableMotor(false);
 	// MOTOR1 => TIMER1A
 	TCCR1A = 0;                       // Timer1 CTC mode 4, OCxA,B outputs disconnected
 	// TCCR1B = (1 << WGM12) | (1 << CS11); // Prescaler=8, => 2Mhz
@@ -172,17 +183,20 @@ void StepperControler::setMotorSpeed (int i, int16_t tspeed)   // motor = 1 or 2
 	{
 		timer_period[i] = ZERO_SPEED;
 		motorMoving[i] = false;
+    enableMotor(false);
 	}
 	else if (speed > 0)
 	{
 		timer_period[i] = 2000000 / speed; // 2Mhz timer
 		motorMoving[i] = true;
+    enableMotor(true);
 		digitalWrite (pinMotorDir[i], LOW);
 	}
 	else
 	{
 		timer_period[i] = 2000000 / -speed;
 		motorMoving[i] = true;
+    enableMotor(true);
 		digitalWrite (pinMotorDir[i], HIGH);
 	}
 	if (timer_period[i] > ZERO_SPEED)   // Check for minimun speed (maximun period without overflow)
