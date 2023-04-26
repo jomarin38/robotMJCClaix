@@ -29,8 +29,9 @@
  * THE SOFTWARE.
  */
 #include "TM1637.h"
+//X STEP et Z STEP
 #define CLK 2//pins definitions for TM1637 and can be changed to other ports
-#define DIO 3
+#define DIO 4
 TM1637 tm1637(CLK,DIO);
 void setup()
 {
@@ -58,6 +59,6 @@ void displayInt(int value) {
 
 void loop()
 {
-  displayInt(4567);
+  displayInt(42);
   delay(300);
 }

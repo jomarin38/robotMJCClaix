@@ -3,11 +3,17 @@
 // relais 1 en 4
 #include "robot.h"
 #include "RCControl.h"
+#include "TM1637.h"
 #define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
 #define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
 RCControl control;
 Robot r;
+
+//X STEP et Z STEP
+#define CLK 9//pins definitions for TM1637 and can be changed to other ports
+#define DIO 10
+TM1637 tm1637(CLK,DIO);
 
 float throttle;
 float steering;
@@ -16,9 +22,16 @@ int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 //int rcKeyPin = 3;  //Y sur CNC, bouclé à la masse ATTENTION ça perturbe la fonciton moteur !!!
 int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
 
+int score = 42;
+
 // INITIALIZATION
 void setup()
 {
+  tm1637.init();
+  tm1637.set(BRIGHT_TYPICAL);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;displayInt(42);
+
+ 
+  
 
   //  pinMode(rcCalibrationPin, INPUT_PULLUP);
   pinMode(rcKeyPin, INPUT_PULLUP);
@@ -76,17 +89,44 @@ void setup()
   }
   r.stop(1);
 }
+
+void displayInt(int value) {
+
+  int reste = 0;
+  
+  int milliers = value/1000;
+  reste = value - milliers*1000;
+  int centaine = reste/100;
+  reste = reste - centaine*100;
+  int dixaine = reste/10;
+  int unite = reste - dixaine * 10;
+
+  tm1637.display(0,milliers);
+  tm1637.display(1,centaine);
+  tm1637.display(2,dixaine);
+  tm1637.display(3,unite);
+  
+}
+
+
 //**********************************************************************
 void loop()
 {
+  displayInt(score);
   //lecture commandes
   throttle = control.getThrottle();
   steering = control.getSteering();
   commande_led = control.getRelais();
 
   //commandes
-  if (commande_led > 1800)digitalWrite(CDE_RELAIS, HIGH);
-  if (commande_led < 1100)digitalWrite(CDE_RELAIS, LOW);
+  if (commande_led > 1800) {
+    digitalWrite(CDE_RELAIS, HIGH);
+    score = score + 1;
+  }
+  if (commande_led < 1100) {
+    digitalWrite(CDE_RELAIS, LOW);
+    score = score - 1;
+  }
 
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
@@ -98,4 +138,5 @@ r.setMovingSpeeds(
   Serial.print("throttle="); Serial.print(throttle);
   Serial.print("steering="); Serial.println(steering);
   Serial.print("commande led="); Serial.println(commande_led);
+  
 }
