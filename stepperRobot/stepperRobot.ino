@@ -8,7 +8,7 @@
 #define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
 
-#define TEMPS_AVANT_DEGUISEMENT 20
+#define TEMPS_AVANT_DEGUISEMENT 100000
 
 RCControl control;
 Robot r;
@@ -26,7 +26,8 @@ int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
 
 int score = 42;
-
+uint32_t temps_dernier_score = 0;
+#define TEMPS_ENTRE_2_AFFICHAGES_MS 300
 // INITIALIZATION
 void setup()
 {
@@ -125,20 +126,10 @@ void displayInt(int value) {
 //**********************************************************************
 void loop()
 {
-  displayInt(score);
   //lecture commandes
   throttle = control.getThrottle();
   steering = control.getSteering();
   commande_score = control.getRelais();
-
-  //commandes
-  if (commande_score > 1800) {
-    
-    score = score + 1;
-  }
-  if (commande_score < 1100) {
-    score = score - 1;
-  }
 
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
@@ -151,9 +142,27 @@ r.setMovingSpeeds(
   Serial.print("steering="); Serial.println(steering);
   Serial.print("commande led="); Serial.println(commande_score);
     
-  uint32_t time = micros() / 1000000;
+  uint32_t chrono_ms = micros() / 1000;
 
-  if(time >= TEMPS_AVANT_DEGUISEMENT ){
+  if(chrono_ms >= TEMPS_AVANT_DEGUISEMENT ){
     allumerDeguissement(true);
   }  
+
+  if( chrono_ms > (temps_dernier_score + TEMPS_ENTRE_2_AFFICHAGES_MS) ){ 
+      //score
+      if (commande_score > 1800) {
+        
+        score = score + 1;
+      }
+      if (commande_score < 1100) {
+        score = score - 1;
+      }
+      temps_dernier_score = chrono_ms;
+      displayInt(score);
+
+  }
+
+
+
+
 }
