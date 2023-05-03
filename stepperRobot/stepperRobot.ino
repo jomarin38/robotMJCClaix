@@ -7,6 +7,9 @@
 #define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
 #define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
+
+#define TEMPS_AVANT_DEGUISEMENT 20
+
 RCControl control;
 Robot r;
 
@@ -17,7 +20,7 @@ TM1637 tm1637(CLK,DIO);
 
 float throttle;
 float steering;
-float commande_led;
+float commande_score;
 int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 //int rcKeyPin = 3;  //Y sur CNC, bouclé à la masse ATTENTION ça perturbe la fonciton moteur !!!
 int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
@@ -88,6 +91,16 @@ void setup()
     control.initializeFromEEPROM();
   }
   r.stop(1);
+  allumerDeguissement(false);
+
+}
+
+void allumerDeguissement(bool allumer){
+  if(allumer == true){
+    digitalWrite(CDE_RELAIS, HIGH);  }
+  else{
+    digitalWrite(CDE_RELAIS, LOW);
+  }
 }
 
 void displayInt(int value) {
@@ -116,15 +129,14 @@ void loop()
   //lecture commandes
   throttle = control.getThrottle();
   steering = control.getSteering();
-  commande_led = control.getRelais();
+  commande_score = control.getRelais();
 
   //commandes
-  if (commande_led > 1800) {
-    digitalWrite(CDE_RELAIS, HIGH);
+  if (commande_score > 1800) {
+    
     score = score + 1;
   }
-  if (commande_led < 1100) {
-    digitalWrite(CDE_RELAIS, LOW);
+  if (commande_score < 1100) {
     score = score - 1;
   }
 
@@ -137,6 +149,11 @@ r.setMovingSpeeds(
   );
   Serial.print("throttle="); Serial.print(throttle);
   Serial.print("steering="); Serial.println(steering);
-  Serial.print("commande led="); Serial.println(commande_led);
-  
+  Serial.print("commande led="); Serial.println(commande_score);
+    
+  uint32_t time = micros() / 1000000;
+
+  if(time >= TEMPS_AVANT_DEGUISEMENT ){
+    allumerDeguissement(true);
+  }  
 }
