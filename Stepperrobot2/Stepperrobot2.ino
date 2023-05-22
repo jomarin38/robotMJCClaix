@@ -1,14 +1,16 @@
+// attention servotimer2 commande de 750 à 2250 !!!!!!
 //#define DEBUG
 // relais en 8, 4, 7 et 12
 // relais 1 en 4
 #include "robot.h"
 #include "RCControl.h"
 #include "TM1637.h"
+#include "ServoTimer2.h" 
 #define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
 #define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
 
-#define TEMPS_AVANT_DEGUISEMENT 100000
+#define TEMPS_AVANT_DEGUISEMENT 20000
 
 RCControl control;
 Robot r;
@@ -17,14 +19,15 @@ Robot r;
 #define CLK 9//pins definitions for TM1637 and can be changed to other ports
 #define DIO 10
 TM1637 tm1637(CLK,DIO);
-
+//Servo myservo;  // create servo object to control a servo
+ServoTimer2 myservo;
 float throttle;
 float steering;
 float commande_score;
 int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 //int rcKeyPin = 3;  //Y sur CNC, bouclé à la masse ATTENTION ça perturbe la fonciton moteur !!!
 int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
-
+int pos = 0;    // variable to store the servo position
 int score = 42;
 uint32_t temps_dernier_score = 0;
 #define TEMPS_ENTRE_2_AFFICHAGES_MS 300
@@ -33,9 +36,12 @@ void setup()
 {
   tm1637.init();
   tm1637.set(BRIGHT_TYPICAL);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;displayInt(42);
-
+myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+delay(200);
  
-  
+
+ myservo.write(1250);              // 1250 position neutre, 
+
 
   //  pinMode(rcCalibrationPin, INPUT_PULLUP);
   pinMode(rcKeyPin, INPUT_PULLUP);
@@ -68,7 +74,22 @@ void setup()
   r.init();
   r.setSmooth(false);
   control.init();
+    // in steps of 1 degree
 
+      for (pos = 1250; pos >= 750; pos-=2) { // goes from 0 degrees to 180 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(1);                       // waits 15ms for the servo to reach the position
+  }
+
+delay(500) ;
+  
+  //for (pos = 0; pos <= 88; pos++) { // goes from 180 degrees to 0 degrees
+  //  myservo.write(pos);              // tell servo to go to position in variable 'pos'
+   // delay(15);                       // waits 15ms for the servo to reach the position
+  //}
+
+
+  
   if (digitalRead(rcCalibrationPin) == HIGH) {
     Serial.println("Beginning calibration process ...");
     Serial.println("Storing zero values ...");
@@ -94,11 +115,14 @@ void setup()
   r.stop(1);
   allumerDeguissement(false);
 
-   r.move(10, 9);
+   r.move(10, 13);  // a ajuster pour distance
     r.stop(1);
-
+  for (pos = 0; pos <= 88; pos++) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
 }
-
+//*****************************************************
 void allumerDeguissement(bool allumer){
   if(allumer == true){
     digitalWrite(CDE_RELAIS, HIGH);  }
@@ -106,7 +130,7 @@ void allumerDeguissement(bool allumer){
     digitalWrite(CDE_RELAIS, LOW);
   }
 }
-
+//******************************************************************
 void displayInt(int value) {
 
   int reste = 0;
