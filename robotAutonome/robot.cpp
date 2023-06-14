@@ -11,7 +11,7 @@ void Robot::move(int16_t speed, int16_t duration) {
 		moveSmooth(speed, duration, accdur);
 	}
 	else {
-		moveAgressive(speed, duration*1000);
+		moveAgressive(speed, duration);
 	}
 	
 }
@@ -44,7 +44,7 @@ void Robot::stop(int16_t duration) {
 
 void Robot::moveSmooth(int16_t speed, int16_t duration, int16_t accdur) {
 	
-	uint16_t dur_millis = duration * 1000;
+	uint16_t dur_millis = duration;
 	
 	if (dur_millis>2*accdur) {
 		uint16_t tempo=100;

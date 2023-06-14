@@ -13,18 +13,19 @@ void setup()
   // Initialisation des moteurs
   Serial.println("Initialisation des moteurs..");
   r.initialiser_robot();
+  r.initialiser_capteurs();
 
   Serial.println("Debut du programme :");
 
-  r.avancer(10,1);
+  /*
+  r.avancer(20,11);
   r.attendre(1);
-  r.tourner_gauche(10,1);
-  r.tourner_droite(10,1);
+  r.tourner_gauche(20,2);
   r.attendre(1);
-  r.reculer(10,1);
-
+  r.avancer(20,7);
+  r.attendre(20);
+  */
 }
-
 
 
 
@@ -32,15 +33,15 @@ void setup()
 void loop()
 {
   //code à exécuter en boucle
-  /*
+  
   int distance = r.mesurer_distance();
   Serial.print("Distance mesuree :");Serial.println(distance);
   if (distance>10) {
-    r.avancer(10,1);
+    r.avancer(20,100);
   }
   else {
     r.attendre(1);
   }
-  */
+  
 
 }

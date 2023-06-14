@@ -21,13 +21,13 @@ void RobotFR::initialiser_capteurs() {
 
 void RobotFR::avancer(int16_t vitesse, int16_t duree) {
 	
-  Robot::move(vitesse, duree);
+  Robot::move(-vitesse, duree);
 	
 }
 
 void RobotFR::reculer(int16_t vitesse, int16_t duree) {
 	
-  Robot::move(-vitesse, duree);
+  Robot::move(vitesse, duree);
 	
 }
 
