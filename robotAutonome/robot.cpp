@@ -28,7 +28,7 @@ void Robot::turn(int16_t speed, int16_t duration) {
 	
 	StepperControler::setMotorSpeed(0, speed);
 	StepperControler::setMotorSpeed(1, -speed);
-	delay(duration*1000);
+	delay(duration);
 	
 }
 

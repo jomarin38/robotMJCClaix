@@ -2,6 +2,8 @@
 
 RobotFR r;
 
+  int detections = 0;
+
 // INITIALIZATION
 void setup()
 {
@@ -33,14 +35,29 @@ void setup()
 void loop()
 {
   //code à exécuter en boucle
+
+
   
   int distance = r.mesurer_distance();
   Serial.print("Distance mesuree :");Serial.println(distance);
-  if (distance>10) {
-    r.avancer(20,100);
+  if (distance>30) {
+    r.avancer(50,100);
   }
   else {
-    r.attendre(1);
+      if (detections>=3){
+
+          r.tourner_droite(20,2100);
+
+          detections = detections + 1;
+        
+      }
+      if (detections<3) {
+          r.tourner_gauche(20,2100);
+
+          detections = detections + 1;
+        
+      }
+    
   }
   
 
