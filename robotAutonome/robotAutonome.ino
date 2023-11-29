@@ -41,23 +41,23 @@ void loop()
   valDetecteurDroite=digitalRead(pinDetecteurDroite);
   //int distance = r.mesurer_distance();
 
-  Serial.print("detection:");Serial.print(detections); 
-  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
-  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
+//  Serial.print("detection:");Serial.print(detections); 
+//  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
+//  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
 
   if ((valDetecteurGauche == valDetecteurDroite)) {
-    r.avancer(10,10);
+    r.avancer(20,5);
     Serial.println("avance");
   }
   else { 
     if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
       Serial.print("Gauche");
-      r.tourner_gauche(10,10);
+      r.tourner_gauche(20,5);
       detections = detections + 1;
     }
     if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
       Serial.print("droite");
-      r.tourner_droite(10,10);
+      r.tourner_droite(20,5);
       detections = detections + 1;
     }
   }
