@@ -5,16 +5,15 @@ RobotFR r;
   int detections = 0;
 
 // INITIALIZATION
-int buttonpin;
-int buttonpin1;
+int pinDetecteurGauche;
+int pinDetecteurDroite;
 void setup()
 {
-//buttonpin=14;
-//buttonpin1=15;
-buttonpin=12;
-buttonpin1=13;
-pinMode(buttonpin,INPUT);
-pinMode( +,INPUT);
+  pinDetecteurGauche=15;
+  pinDetecteurDroite=14;
+
+  pinMode(pinDetecteurGauche,INPUT);
+  pinMode( pinDetecteurDroite,INPUT);
   Serial.begin(115200); // Serial output to console
   delay(200);
   Serial.println("Programme Robot Autonome en Francais");
@@ -22,55 +21,44 @@ pinMode( +,INPUT);
   // Initialisation des moteurs
   Serial.println("Initialisation des moteurs..");
   r.initialiser_robot();
- // r.initialiser_capteurs();
-
+  // r.initialiser_capteurs();
+  
   Serial.println("Debut du programme :");
-
-  /*
-  r.avancer(20,11);
-  r.attendre(1);
-  r.tourner_gauche(20,2);
-  r.attendre(1);
-  r.avancer(20,7);
-  r.attendre(20);
-  */
 }
 
 
 
 //**********************************************************************
 void loop()
-{bool val1;
-bool val;
+{
+  bool valDetecteurDroite;
+  bool valDetecteurGauche;
   //code à exécuter en boucle
 
+  delay(10);
 
-  val=digitalRead(buttonpin);
-val1=digitalRead(buttonpin1);
+  valDetecteurGauche=digitalRead(pinDetecteurGauche);
+  valDetecteurDroite=digitalRead(pinDetecteurDroite);
   //int distance = r.mesurer_distance();
-  
-Serial.print("val:");Serial.println(val);
-Serial.print("val1:");Serial.println(val1);
-  if ((val==LOW)&&(val1==LOW)) {
-    r.reculer(50,100);
+
+  Serial.print("detection:");Serial.print(detections); 
+  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
+  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
+
+  if ((valDetecteurGauche == valDetecteurDroite)) {
+    r.avancer(10,10);
+    Serial.println("avance");
   }
   else { 
-      if (((val==HIGH)&&(val1==LOW))){
-        Serial.print("droite");
-          r.tourner_droite(20,2100);
-
-          detections = detections + 1;
-        
-      }
-      if ((val==LOW)&&(val1==HIGH)) {
-          Serial.print("gauche");
-          r.tourner_gauche(20,2100);
-
-          detections = detections + 1;
-        
-      }
-    
+    if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
+      Serial.print("Gauche");
+      r.tourner_gauche(10,10);
+      detections = detections + 1;
+    }
+    if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
+      Serial.print("droite");
+      r.tourner_droite(10,10);
+      detections = detections + 1;
+    }
   }
-  
-
 }
