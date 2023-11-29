@@ -1,0 +1,32 @@
+#ifndef ROBOTFR
+#define ROBOTFR
+
+#define US_TRIG_PIN 11
+#define US_ECHO_PIN 10
+
+#include "robot.h"
+
+class RobotFR : Robot {
+
+	public :
+		RobotFR(){smooth=false;accdur=200;}
+		~RobotFR(){}
+		
+		void initialiser_robot();
+    void initialiser_capteurs();
+
+		void avancer(int16_t vitesse, int16_t duree);
+    void reculer(int16_t vitesse, int16_t duree);
+
+		void tourner_gauche(int16_t vitesse, int16_t duree);
+    void tourner_droite(int16_t vitesse, int16_t duree);
+    
+		void attendre(int16_t duree);
+
+		void bouger(float vitesse, float rotation);
+
+    int mesurer_distance();
+
+};
+
+#endif
