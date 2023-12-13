@@ -110,7 +110,6 @@ void setup()
 void loop()
 {
   //code à exécuter en boucle
-  bool etat_changement = false;
 //  delay(1);
 
 //  Serial.print("detection:");Serial.print(detections); 
@@ -126,7 +125,7 @@ void loop()
     etat_precedent = etat_courant;  
 
     if ((etat_courant == ETAT_ALLER_TOUT_DROIT)) {
-      r.bouger(-40, 0);
+      r.bouger(-50, 0);
       Serial.println("avance");
       detections = detections + 1;
 
@@ -134,12 +133,12 @@ void loop()
     else { 
       if (etat_courant == ETAT_TOURNER_GAUCHE){
         Serial.println("Gauche");
-        r.bouger(-30, 50);
+        r.bouger(-40, 50);
         detections = detections + 1;
       }
       if (etat_courant == ETAT_TOURNER_DROITE) {
         Serial.println("droite");
-        r.bouger(-30, -50);
+        r.bouger(-40, -50);
         detections = detections + 1;
       }
     }
