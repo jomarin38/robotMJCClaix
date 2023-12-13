@@ -1,5 +1,5 @@
 #include "RCControl.h"
-#include "PinChangeInt.h" // for RC reciver
+//#include "PinChangeInt.h" // for RC reciver
 
 #include <EEPROM.h>
 
@@ -87,9 +87,9 @@ void RCControl::init()
 	pinMode(UP_DOWN_IN_PIN, INPUT);
 	pinMode(LEFT_RIGHT_IN_PIN, INPUT);
 
-	PCintPort::attachInterrupt(UP_DOWN_IN_PIN, calcUpDown,CHANGE);
-	PCintPort::attachInterrupt(LEFT_RIGHT_IN_PIN, calcLeftRight,CHANGE);
-  PCintPort::attachInterrupt(PWM_RELAIS, calcRelais,CHANGE);
+//	PCintPort::attachInterrupt(UP_DOWN_IN_PIN, calcUpDown,CHANGE);
+//	PCintPort::attachInterrupt(LEFT_RIGHT_IN_PIN, calcLeftRight,CHANGE);
+//  PCintPort::attachInterrupt(PWM_RELAIS, calcRelais,CHANGE);
 }
 //***********************************************************************
 void RCControl::calibrateZero() {
