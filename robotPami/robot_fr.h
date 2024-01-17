@@ -1,8 +1,6 @@
 #ifndef ROBOTFR
 #define ROBOTFR
 
-#define US_TRIG_PIN 11
-#define US_ECHO_PIN 10
 
 #include "robot.h"
 

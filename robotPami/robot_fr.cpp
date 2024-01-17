@@ -15,8 +15,8 @@ void RobotFR::initialiser_robot() {
 }
 
 void RobotFR::initialiser_capteurs() {
-	pinMode(US_TRIG_PIN, OUTPUT);
-  pinMode(US_ECHO_PIN, INPUT);
+//	pinMode(US_TRIG_PIN, OUTPUT);
+//  pinMode(US_ECHO_PIN, INPUT);
 }
 
 void RobotFR::avancer(int16_t vitesse, int16_t duree) {
@@ -56,12 +56,13 @@ void RobotFR::bouger(float vitesse, float rotation) {
 }
 
 int RobotFR::mesurer_distance() {
-  digitalWrite(US_TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(US_TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(US_TRIG_PIN, LOW);
-  const unsigned long duration= pulseIn(US_ECHO_PIN, HIGH);
-  int distance= duration/29/2;
-  return distance;
+//  digitalWrite(US_TRIG_PIN, LOW);
+//  delayMicroseconds(2);
+//  digitalWrite(US_TRIG_PIN, HIGH);
+//  delayMicroseconds(10);
+//  digitalWrite(US_TRIG_PIN, LOW);
+//  const unsigned long duration= pulseIn(US_ECHO_PIN, HIGH);
+//  int distance= duration/29/2;
+//  return distance;
+return 1;
 }
