@@ -33,7 +33,6 @@ void loop() {
 }
 
 bool checkCross() {
-  bool res = false;
   bool lineFound = false;
   bool lineEnded = false;
   for (int i=0;i<5;i++) {
