@@ -15,8 +15,8 @@ RobotFR r;
 #define ETAT_TOURNER_DROITE_LEGER 6
 #define ETAT_TOURNER_DROITE_FORT 7
 
-unsigned char etat_courant;
-unsigned char etat_precedent; 
+unsigned char etat_nouveau;
+unsigned char etat_courant; 
 int detections = 0;
 
 // INITIALIZATION
@@ -27,95 +27,71 @@ volatile  bool valDetecteurDroite;
 volatile  bool valDetecteurGauche;
 int sensorPin;
 int sensorValue = 0;
-
-
-//void appelGaucheEventDown(){
-//  Serial.println("Left event down");
-//  valDetecteurGauche=LOW;
-//}
-//void appelGaucheEventUp(){
-//  Serial.println("Left event up");
-//  valDetecteurGauche=HIGH;
-//}
-//
-//void appelDroiteEventDown(){
-//  Serial.println("Right event down");
-//  valDetecteurDroite=LOW;
-//}
-//
-//void appelDroiteEventUp(){
-//  Serial.println("Right event up");
-//  valDetecteurDroite=HIGH;
-//}
+int vitesse = -40;
 
 void determiner_direction_analog(int value)
 {
-  if ((value <= 100)) {
-    etat_courant = ETAT_TOURNER_GAUCHE_FORT;
-  } else if ((value <= 256)) {
-    etat_courant = ETAT_TOURNER_GAUCHE_LEGER;
-  }else if ((value <= 400)) {
-    etat_courant = ETAT_ALLER_TOUT_DROIT;
-  }else if ((value <= 550)) {
-    etat_courant = ETAT_TOURNER_DROITE_LEGER;
-  }else if ((value <= 880)) {
-    etat_courant = ETAT_TOURNER_DROITE_FORT;
+
+
+  if ((value <= 30)) {
+    Serial.println("erreur ?");
+
   }
-  else { 
-    if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
-      etat_courant = ETAT_TOURNER_GAUCHE;
-    }
-    if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
-      etat_courant = ETAT_TOURNER_DROITE;
-    }
-  }  
+  else if ((value <= 200)) {
+    etat_nouveau = ETAT_TOURNER_GAUCHE_FORT;
+  //  Serial.println("tourner gauche fort");
+
+  } else if ((value <= 400)) {
+    etat_nouveau = ETAT_TOURNER_GAUCHE_LEGER;
+  //  Serial.println("tourner gauche leger");
+  }else if ((value <= 600)) {
+    etat_nouveau = ETAT_ALLER_TOUT_DROIT;
+  //  Serial.println("tout droit");
+  }else if ((value <= 800)) {
+    etat_nouveau = ETAT_TOURNER_DROITE_LEGER;
+  //  Serial.println("tourner droite leger");
+
+  }else {
+    etat_nouveau = ETAT_TOURNER_DROITE_FORT;
+  //  Serial.println("tourner droite fort");
+
+  }
   
 }
-void determiner_direction(){
-  if ((valDetecteurGauche == valDetecteurDroite)) {
-    etat_courant = ETAT_ALLER_TOUT_DROIT;
-  }
-  else { 
-    if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
-      etat_courant = ETAT_TOURNER_GAUCHE;
-    }
-    if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
-      etat_courant = ETAT_TOURNER_DROITE;
-    }
-  }  
-//  switch (etat_courant){
-//    case(ETAT_TOURNER_GAUCHE):
-//      Serial.println("nouvelle direction gauche");
-//      break;
-//
-//    case(ETAT_TOURNER_DROITE):
-//      Serial.println("nouvelle direction droite");
-//      break;
-//    case(ETAT_ALLER_TOUT_DROIT):
-//          Serial.println("nouvelle direction tout droit");
-//      break;
-//    default:
-//      Serial.println("nouvelle direction erreur");
-//      break;
-//  }
-}
-void appelGaucheEvent(){
-  valDetecteurGauche=digitalRead(pinDetecteurGauche);;
-//  valDetecteurDroite=digitalRead(pinDetecteurDroite);;
-  //determiner_direction();
-  //Serial.print("Left event : ");Serial.println(valDetecteurGauche);
-}
 
-void appelDroiteEvent(){
-//  valDetecteurGauche=digitalRead(pinDetecteurGauche);;
-  valDetecteurDroite=digitalRead(pinDetecteurDroite);;
- // determiner_direction();
- // Serial.print("Right event : ");Serial.println(valDetecteurDroite);
+int determiner_direction_analog2(int value){
+  int dir = 0;
+  double facteur = 4;
+  double dirTemp1 = 0;
+  double dirTemp2 = 0;
+  
+  if (value < 30 ){
+    dir = -255;
+  }else{
+//    dir = (value * 180 / 1024) - 90 ; 
+//    dir = (value - 512) * 180 /1024 ;
+dirTemp1 = (value - 512);
+dirTemp2 = dirTemp1 * facteur *100 /1024.0 ;
+dir = dirTemp2;
+    Serial.print("value = ");Serial.print(value);
+    Serial.print(" dirTemp1 = ");Serial.print(dirTemp1);Serial.print(" dirTemp2 = ");Serial.print(dirTemp2);
+    Serial.print(" dir = ");Serial.println(dir);
+ 
+    //  delay(200);
+    if(-30 < dir && dir < 30){
+      vitesse = -20 * facteur;
+    } else {
+      vitesse = -20 *facteur;
+    }
+//    Serial.print("Valeurs calculees: vitesse = ");Serial.print(vitesse);Serial.print(" dir = ");Serial.print(dir);
+//    Serial.print(" value = ");Serial.println(value);
+  }
+  return dir;
 }
 void setup()
 {
-  etat_courant = ETAT_ALLER_TOUT_DROIT;
-  etat_precedent = ETAT_INDEFINI; 
+  etat_nouveau = ETAT_ALLER_TOUT_DROIT;
+  etat_courant = ETAT_INDEFINI; 
   sensorPin = A5;
 //  pinDetecteurGauche=14;
 //  pinDetecteurDroite=15;
@@ -141,15 +117,12 @@ void setup()
 
 void loop()
 {
+  int dir = 0;
   //code à exécuter en boucle
-//  delay(1);
+  delay(10);
 
-//  Serial.print("detection:");Serial.print(detections); 
-//  Serial.print("State:");Serial.print(etat_courant);
-//  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
-//  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
   
-  Serial.print("Valeur analogique:");Serial.println(sensorValue);
+//  Serial.print("Valeur analogique:");Serial.println(sensorValue);
   sensorValue = analogRead(sensorPin);
 
 //  valDetecteurGauche=digitalRead(pinDetecteurGauche);
@@ -157,168 +130,87 @@ void loop()
 
 
 
-  determiner_direction_analog(sensorValue);
-  if(etat_courant != etat_precedent)
-  {
-    etat_precedent = etat_courant;  
+  dir = determiner_direction_analog2(sensorValue);
+//  Serial.print("Valeur analogique:");Serial.println(sensorValue);
+//  Serial.print("Valeur direction:");Serial.println(dir);
 
-    if ((etat_courant == ETAT_ALLER_TOUT_DROIT)) {
-      r.bouger(-50, 0);
-      Serial.println("avance");
-      detections = detections + 1;
-
-    }
-    else { 
-      if (etat_courant == ETAT_TOURNER_GAUCHE_LEGER){
-        Serial.println("Gauche");
-        r.bouger(-40, 50);
-        detections = detections + 1;
-      }
-      if (etat_courant == ETAT_TOURNER_GAUCHE_FORT){
-        Serial.println("Gauche");
-        r.bouger(-40, 80);
-        detections = detections + 1;
-      }
-
-      if (etat_courant == ETAT_TOURNER_DROITE_LEGER) {
-        Serial.println("droite");
-        r.bouger(-40, -50);
-        detections = detections + 1;
-      }
-      if (etat_courant == ETAT_TOURNER_DROITE_FORT) {
-        Serial.println("droite");
-        r.bouger(-40, -80);
-        detections = detections + 1;
-      }
-    }
+  if(dir > -255){
+     r.bouger(vitesse, dir);
   }
+
+}
+
+
+//void loop()
+//{
+//  //code à exécuter en boucle
+//  //delay(100);
+//
+//  
+////  Serial.print("Valeur analogique:");Serial.println(sensorValue);
+//  sensorValue = analogRead(sensorPin);
+//
+////  valDetecteurGauche=digitalRead(pinDetecteurGauche);
+////  valDetecteurDroite=digitalRead(pinDetecteurDroite);
+//
+//
+//
+//  determiner_direction_analog(sensorValue);
+//  if(etat_nouveau != etat_courant)
+//  {
+//    if(detections < 10) {
+//      detections = detections + 1;
+//    } else {
+//      etat_courant = etat_nouveau;  
+//      detections = 0;
+//
+//      if ((etat_nouveau == ETAT_ALLER_TOUT_DROIT)) {
+//        r.bouger(-25, 0);
+//        //Serial.println("avance");
+//   
+//      }
+//      else { 
+//        if (etat_nouveau == ETAT_TOURNER_GAUCHE_LEGER){
+//          //Serial.println("Gauche leger");
+//          r.bouger(-25, 40);
+//        }else if (etat_nouveau == ETAT_TOURNER_GAUCHE_FORT){
+//          //Serial.println("Gauche fort");
+//          r.bouger(-25, 70);
+//        }else if (etat_nouveau == ETAT_TOURNER_DROITE_LEGER) {
+//          //Serial.println("droite leger");
+//          r.bouger(-25, -40);
+//        }else if (etat_nouveau == ETAT_TOURNER_DROITE_FORT) {
+//          //Serial.println("droite fort");
+//          r.bouger(-25, -70);
+//        } else {
+//          //Serial.println("erreur");
+//        }
+//      }
+//    }
+//  }
+
   
 //  determiner_direction();
-//  if(etat_courant != etat_precedent)
+//  if(etat_nouveau != etat_courant)
 //  {
-//    etat_precedent = etat_courant;  
+//    etat_courant = etat_nouveau;  
 //
-//    if ((etat_courant == ETAT_ALLER_TOUT_DROIT)) {
+//    if ((etat_nouveau == ETAT_ALLER_TOUT_DROIT)) {
 //      r.bouger(-50, 0);
 //      Serial.println("avance");
 //      detections = detections + 1;
 //
 //    }
 //    else { 
-//      if (etat_courant == ETAT_TOURNER_GAUCHE){
+//      if (etat_nouveau == ETAT_TOURNER_GAUCHE){
 //        Serial.println("Gauche");
 //        r.bouger(-40, 50);
 //        detections = detections + 1;
 //      }
-//      if (etat_courant == ETAT_TOURNER_DROITE) {
+//      if (etat_nouveau == ETAT_TOURNER_DROITE) {
 //        Serial.println("droite");
 //        r.bouger(-40, -50);
 //        detections = detections + 1;
 //      }
 //    }
 //  }
-
-}
-
-
-
-//void loop()
-//{
-//  //code à exécuter en boucle
-//  bool etat_changement = false;
-//  delay(1);
-//
-////  Serial.print("detection:");Serial.print(detections); 
-////  Serial.print("State:");Serial.print(etat_courant);
-////  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
-////  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
-//
-// determiner_direction();
-//  if(etat_courant != etat_precedent)
-//  {
-//    etat_precedent = etat_courant;  
-//
-//    if ((etat_courant == ETAT_ALLER_TOUT_DROIT)) {
-//      r.bouger(-40, 0);
-//      Serial.println("avance");
-//      detections = detections + 1;
-//
-//    }
-//    else { 
-//      if (etat_courant == ETAT_TOURNER_GAUCHE){
-//        Serial.println("Gauche");
-//        r.bouger(-30, 50);
-//        detections = detections + 1;
-//      }
-//      if (etat_courant == ETAT_TOURNER_DROITE) {
-//        Serial.println("droite");
-//        r.bouger(-30, -50);
-//        detections = detections + 1;
-//      }
-//    }
-//  }
-//
-//}
-//
-//void loop()
-//{
-//  //code à exécuter en boucle
-//
-//  delay(100);
-//
-////  Serial.print("detection:");Serial.print(detections); 
-////  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
-////  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
-//
-//  if ((valDetecteurGauche == valDetecteurDroite)) {
-//    r.bouger(-40, 0);
-//    Serial.println("avance");
-//  }
-//  else { 
-//    if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
-//      Serial.print("Gauche");
-//      r.bouger(-30, 50);
-//      detections = detections + 1;
-//    }
-//    if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
-//      Serial.print("droite");
-//      r.bouger(-30, -50);
-//      detections = detections + 1;
-//    }
-//  }  
-//}
-//**********************************************************************
-//void loop()
-//{
-//  bool valDetecteurDroite;
-//  bool valDetecteurGauche;
-//  //code à exécuter en boucle
-//
-//  delay(10);
-//
-//
-//  valDetecteurGauche=digitalRead(pinDetecteurGauche);
-//  valDetecteurDroite=digitalRead(pinDetecteurDroite);
-//  //int distance = r.mesurer_distance();
-//
-////  Serial.print("detection:");Serial.print(detections); 
-////  Serial.print("| valGauche:");Serial.print(valDetecteurGauche);
-////  Serial.print("| valDroite:");Serial.println(valDetecteurDroite);
-//
-//  if ((valDetecteurGauche == valDetecteurDroite)) {
-//    r.avancer(20,5);
-//    Serial.println("avance");
-//  }
-//  else { 
-//    if (((valDetecteurGauche==HIGH)&&(valDetecteurDroite==LOW))){
-//      Serial.print("Gauche");
-//      r.tourner_gauche(20,5);
-//      detections = detections + 1;
-//    }
-//    if ((valDetecteurGauche==LOW)&&(valDetecteurDroite==HIGH)) {
-//      Serial.print("droite");
-//      r.tourner_droite(20,5);
-//      detections = detections + 1;
-//    }
-//  }
-//}
