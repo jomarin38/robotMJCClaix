@@ -25,6 +25,7 @@ class StepperControler
 		static int8_t pinMotorStep[2];
 		static float max_accel;
 		static int16_t motorSpeed[2]; // Actual speed of motors
+    static long lastSpeedChange[2]; // Actual speed of motors
 	
 	public:
 	
