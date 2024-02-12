@@ -126,24 +126,30 @@ void displayInt(int value) {
   
 }
 
+float expo(float input) {
+  float exponent = 2;
+  return pow(input/100.0,exponent)*100.0;
+}
+
 
 //**********************************************************************
 void loop()
 {
   //lecture commandes
-  throttle = control.getThrottle();
-  steering = control.getSteering();
+  throttle = expo(control.getThrottle());
+  steering = expo(control.getSteering());
   commande_score = control.getRelais();
 
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
+  Serial.print("throttle="); Serial.print(throttle);
+  Serial.print("steering="); Serial.println(steering);
 
-r.setMovingSpeeds(
+  r.setMovingSpeeds(
     throttle,
     steering
   );
-  Serial.print("throttle="); Serial.print(throttle);
-  Serial.print("steering="); Serial.println(steering);
+
   Serial.print("commande led="); Serial.println(commande_score);
     
   uint32_t chrono_ms = micros() / 1000;
