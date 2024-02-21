@@ -55,6 +55,9 @@ ISR(TIMER1_COMPA_vect)
 		digitalWrite (StepperControler::getPinMotorStep(0),LOW);
 	}
 	OCR1A += timer_period[0];
+  if (!targetSpeedSatisfied[0]) {
+    StepperControler::setMotorSpeed(0,targetMotorSpeed[0]);
+  }
 }
 // TIMER 3 : STEPPER MOTOR2 SPEED CONTROL
 ISR(TIMER1_COMPB_vect)
@@ -66,6 +69,9 @@ ISR(TIMER1_COMPB_vect)
 		digitalWrite (StepperControler::getPinMotorStep(1), LOW);
 	}
 	OCR1B += timer_period[1];
+  if (!targetSpeedSatisfied[1]) {
+    StepperControler::setMotorSpeed(1,targetMotorSpeed[1]);
+  }
 }
 
 ISR(EXTERNAL_INT0_vect)

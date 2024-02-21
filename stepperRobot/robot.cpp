@@ -69,6 +69,6 @@ void Robot::moveSmooth(int16_t speed, int16_t duration, int16_t accdur) {
 
 void Robot::setMovingSpeeds(float speedNeed, float turnNeed)
 {
-	StepperControler::setMotorSpeed(0, speedNeed + turnNeed/2.0);
-	StepperControler::setMotorSpeed(1, speedNeed - turnNeed/2.0);
+	StepperControler::setMotorSpeed(0, (speedNeed + turnNeed/2.0)/1.5);
+	StepperControler::setMotorSpeed(1, (speedNeed - turnNeed/2.0)/1.5);
 }

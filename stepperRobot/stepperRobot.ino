@@ -41,7 +41,7 @@ void setup()
  
   
 
-  //  pinMode(rcCalibrationPin, INPUT_PULLUP);
+  pinMode(rcCalibrationPin, INPUT_PULLUP);
   pinMode(rcKeyPin, INPUT_PULLUP);
   pinMode(CDE_RELAIS, OUTPUT); // relais eclairage
   pinMode(PWM_RELAIS, INPUT);// lecture manette RC pour leds
@@ -61,10 +61,10 @@ void setup()
   delay(200);
   Serial.println("Programme Stepper version du 17/03/2023");
   Serial.println("attente arrachement de la clé...\n");
-  //Pin Y au zero
-  while (digitalRead(rcKeyPin) == HIGH ) {
-    delay(50);
-  }
+//  //Pin Y au zero
+//  while (digitalRead(rcKeyPin) == HIGH ) {
+//    delay(50);
+//  }
 
   Serial.println("Départ");
   // STEPPER MOTORS INITIALIZATION
