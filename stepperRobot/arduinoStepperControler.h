@@ -5,9 +5,10 @@
 #define MICROSTEPPING 8   // 8 or 16 for 1/8 or 1/16 driver microstepping (default:16)
  
 #define ZERO_SPEED 65535
-#define MAX_ACCEL 1        // Maximun motor acceleration (MAX RECOMMENDED VALUE: 8) (default:7)
+#define MAX_ACCEL 7        // Maximun motor acceleration (MAX RECOMMENDED VALUE: 8) (default:7)
 #define MAX_ACCEL_SAFE 1  
 #define MAX_RESET_CLK 20000
+#define MIN_ACCEL_DELAY 10 //Delay between 2 speed changes when MAX_ACCELL is reached
 
 #include <Arduino.h>
 
@@ -25,7 +26,6 @@ class StepperControler
 		static int8_t pinMotorStep[2];
 		static float max_accel;
 		static int16_t motorSpeed[2]; // Actual speed of motors
-    static long lastSpeedChange[2]; // Actual speed of motors
 	
 	public:
 	

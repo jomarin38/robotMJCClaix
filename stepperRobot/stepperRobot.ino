@@ -126,7 +126,6 @@ void displayInt(int value) {
   
 }
 
-
 //**********************************************************************
 void loop()
 {
@@ -135,16 +134,17 @@ void loop()
   steering = control.getSteering();
   commande_score = control.getRelais();
 
-  if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
-  if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
+//  if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
+//  if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
 
-r.setMovingSpeeds(
+  //Serial.print("throttle="); Serial.print(throttle);
+  //Serial.print("steering="); Serial.println(steering);
+  //Serial.print("commande led="); Serial.println(commande_score);
+
+  r.setMovingSpeeds(
     throttle,
     steering
   );
-  Serial.print("throttle="); Serial.print(throttle);
-  Serial.print("steering="); Serial.println(steering);
-  Serial.print("commande led="); Serial.println(commande_score);
     
   uint32_t chrono_ms = micros() / 1000;
 
@@ -166,7 +166,6 @@ r.setMovingSpeeds(
 
   }
 
-
-
+  delay(50);
 
 }
