@@ -5,7 +5,8 @@
 #define MICROSTEPPING 8   // 8 or 16 for 1/8 or 1/16 driver microstepping (default:16)
  
 #define ZERO_SPEED 65535
-#define MAX_ACCEL 7        // Maximun motor acceleration (MAX RECOMMENDED VALUE: 8) (default:7)
+#define MAX_ACCEL 6        // Maximun motor acceleration (MAX RECOMMENDED VALUE: 8) (default:7)
+#define MAX_DECEL 12
 #define MAX_ACCEL_SAFE 1  
 #define MAX_RESET_CLK 20000
 #define MIN_ACCEL_DELAY 10 //Delay between 2 speed changes when MAX_ACCELL is reached

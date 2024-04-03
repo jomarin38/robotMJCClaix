@@ -6,7 +6,6 @@
 
 volatile bool motorMoving[2] = {false, false};
 volatile long timer_period[2];
-volatile bool targetSpeedSatisfied[2] = {false, false};
 volatile int16_t targetMotorSpeed[2] = {0, 0};    // Target speed of motors
 volatile long lastSpeedChange[2] = {0, 0};
 
@@ -150,22 +149,42 @@ void StepperControler::setMotorSpeed (int i, int16_t tspeed)   // motor = 1 or 2
 #endif
 
   long now = millis();
-	// WE LIMIT MAX ACCELERATION of the motors
-	if (abs(((motorSpeed[i] - tspeed)*1000)/(now - lastSpeedChange[i])) > max_accel)
-	{
-    if (motorSpeed[i] > tspeed) {
-      motorSpeed[i] -= max_accel;
+
+  
+  if (abs(motorSpeed[i]) > abs(tspeed)) {
+  	// WE LIMIT MAX ACCELERATION of the motors
+  	if (abs(((motorSpeed[i] - tspeed)*1000)/(now - lastSpeedChange[i])) > MAX_DECEL)
+  	{
+      if (motorSpeed[i] > tspeed) {
+        motorSpeed[i] -= max_accel;
+      }
+      else {
+        motorSpeed[i] += max_accel;
+      }
+  	}
+  	else
+  	{
+  		motorSpeed[i] = tspeed;
+  	}
+  }
+
+  if (abs(motorSpeed[i]) < abs(tspeed)) {
+    // WE LIMIT MAX DECELERATION of the motors
+    if (abs(((motorSpeed[i] - tspeed)*1000)/(now - lastSpeedChange[i])) > max_accel)
+    {
+      if (motorSpeed[i] > tspeed) {
+        motorSpeed[i] -= max_accel;
+      }
+      else {
+        motorSpeed[i] += max_accel;
+      }
     }
-    else {
-      motorSpeed[i] += max_accel;
+    else
+    {
+      motorSpeed[i] = tspeed;
     }
-		targetSpeedSatisfied[i] = false;
-	}
-	else
-	{
-		motorSpeed[i] = tspeed;
-		targetSpeedSatisfied[i] = true;
-	}
+  }
+  
   lastSpeedChange[i]=now;
 
 #ifdef DEBUG		

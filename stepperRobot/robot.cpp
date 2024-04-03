@@ -69,13 +69,13 @@ void Robot::moveSmooth(int16_t speed, int16_t duration, int16_t accdur) {
 
 void Robot::setMovingSpeeds(float speedNeed, float turnNeed)
 {
-  float turnProportion = 2.0;
+  float turnProportion = 3.0;
   if (speedNeed<50.0) {
     turnProportion = 1.0;
   }
   float maxValue = 1.0 + 1.0/turnProportion;
-  int m1_speed = 1.5*(speedNeed + turnNeed/turnProportion)/maxValue;
-  int m2_speed = 1.5*(speedNeed - turnNeed/turnProportion)/maxValue;
+  int m1_speed = 2.0*(speedNeed + turnNeed/turnProportion)/maxValue;
+  int m2_speed = 2.0*(speedNeed - turnNeed/turnProportion)/maxValue;
 	StepperControler::setMotorSpeed(0, m1_speed);
 	StepperControler::setMotorSpeed(1, m2_speed);
   //Serial.print("M1:");Serial.print(m1_speed);Serial.print(",M2:");Serial.println(m2_speed);
