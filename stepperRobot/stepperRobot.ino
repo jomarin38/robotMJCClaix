@@ -41,7 +41,7 @@ void setup()
  
   
 
-  //  pinMode(rcCalibrationPin, INPUT_PULLUP);
+  pinMode(rcCalibrationPin, INPUT_PULLUP);
   pinMode(rcKeyPin, INPUT_PULLUP);
   pinMode(CDE_RELAIS, OUTPUT); // relais eclairage
   pinMode(PWM_RELAIS, INPUT);// lecture manette RC pour leds
@@ -61,10 +61,10 @@ void setup()
   delay(200);
   Serial.println("Programme Stepper version du 17/03/2023");
   Serial.println("attente arrachement de la clé...\n");
-  //Pin Y au zero
-  while (digitalRead(rcKeyPin) == HIGH ) {
-    delay(50);
-  }
+//  //Pin Y au zero
+//  while (digitalRead(rcKeyPin) == HIGH ) {
+//    delay(50);
+//  }
 
   Serial.println("Départ");
   // STEPPER MOTORS INITIALIZATION
@@ -126,7 +126,6 @@ void displayInt(int value) {
   
 }
 
-
 //**********************************************************************
 void loop()
 {
@@ -138,13 +137,14 @@ void loop()
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
 
-r.setMovingSpeeds(
+  //Serial.print("throttle="); Serial.print(throttle);
+  //Serial.print("steering="); Serial.println(steering);
+  //Serial.print("commande led="); Serial.println(commande_score);
+
+  r.setMovingSpeeds(
     throttle,
     steering
   );
-  Serial.print("throttle="); Serial.print(throttle);
-  Serial.print("steering="); Serial.println(steering);
-  Serial.print("commande led="); Serial.println(commande_score);
     
   uint32_t chrono_ms = micros() / 1000;
 
@@ -166,7 +166,6 @@ r.setMovingSpeeds(
 
   }
 
-
-
+  delay(50);
 
 }

@@ -6,8 +6,8 @@
 
 volatile bool motorMoving[2] = {false, false};
 volatile long timer_period[2];
-volatile bool targetSpeedSatisfied[2] = {false, false};
 volatile int16_t targetMotorSpeed[2] = {0, 0};    // Target speed of motors
+volatile long lastSpeedChange[2] = {0, 0};
 
 //End of variables used by ISR
 
@@ -54,9 +54,6 @@ ISR(TIMER1_COMPA_vect)
 		digitalWrite (StepperControler::getPinMotorStep(0),LOW);
 	}
 	OCR1A += timer_period[0];
-	if (!targetSpeedSatisfied[0]) {
-		StepperControler::setMotorSpeed(0,targetMotorSpeed[0]);
-	}
 }
 // TIMER 3 : STEPPER MOTOR2 SPEED CONTROL
 ISR(TIMER1_COMPB_vect)
@@ -68,9 +65,6 @@ ISR(TIMER1_COMPB_vect)
 		digitalWrite (StepperControler::getPinMotorStep(1), LOW);
 	}
 	OCR1B += timer_period[1];
-	if (!targetSpeedSatisfied[1]) {
-		StepperControler::setMotorSpeed(1,targetMotorSpeed[1]);
-	}
 }
 
 ISR(EXTERNAL_INT0_vect)
@@ -153,22 +147,45 @@ void StepperControler::setMotorSpeed (int i, int16_t tspeed)   // motor = 1 or 2
 #ifdef REVERSEM1
 	if (i == 1) tspeed = - tspeed;
 #endif
-	// WE LIMIT MAX ACCELERATION of the motors
-	if ((motorSpeed[i] - tspeed) > max_accel)
-	{
-		motorSpeed[i] -= max_accel;
-		targetSpeedSatisfied[i] = false;
-	}
-	else if ((motorSpeed[i] - tspeed) < -max_accel) 
-	{
-		motorSpeed[i] += max_accel;
-		targetSpeedSatisfied[i] = false;
-	}	
-	else
-	{
-		motorSpeed[i] = tspeed;
-		targetSpeedSatisfied[i] = true;
-	}
+
+  long now = millis();
+
+  
+  if (abs(motorSpeed[i]) > abs(tspeed)) {
+  	// WE LIMIT MAX ACCELERATION of the motors
+  	if (abs(((motorSpeed[i] - tspeed)*1000)/(now - lastSpeedChange[i])) > MAX_DECEL)
+  	{
+      if (motorSpeed[i] > tspeed) {
+        motorSpeed[i] -= max_accel;
+      }
+      else {
+        motorSpeed[i] += max_accel;
+      }
+  	}
+  	else
+  	{
+  		motorSpeed[i] = tspeed;
+  	}
+  }
+
+  if (abs(motorSpeed[i]) < abs(tspeed)) {
+    // WE LIMIT MAX DECELERATION of the motors
+    if (abs(((motorSpeed[i] - tspeed)*1000)/(now - lastSpeedChange[i])) > max_accel)
+    {
+      if (motorSpeed[i] > tspeed) {
+        motorSpeed[i] -= max_accel;
+      }
+      else {
+        motorSpeed[i] += max_accel;
+      }
+    }
+    else
+    {
+      motorSpeed[i] = tspeed;
+    }
+  }
+  
+  lastSpeedChange[i]=now;
 
 #ifdef DEBUG		
 	Serial.print("MotorSpeed[");Serial.print(i);Serial.print("]=");Serial.println(motorSpeed[i]);
@@ -206,5 +223,9 @@ void StepperControler::setMotorSpeed (int i, int16_t tspeed)   // motor = 1 or 2
 		OCR1A += timer_period[0];
 	else
 		OCR1B += timer_period[1];
+  
+  Serial.print("T1:");Serial.print(targetMotorSpeed[0]);Serial.print(",T2:");Serial.print(targetMotorSpeed[1]);
+  Serial.print(",M1:");Serial.print(motorSpeed[0]);Serial.print(",M2:");Serial.println(motorSpeed[1]);
+  
 
 }
