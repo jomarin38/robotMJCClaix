@@ -46,7 +46,8 @@ class RCControl
 		
 		static float getThrottle();
 		static float getSteering();
-   static float getRelais();
+    static float getRelais();
+    static float getAfficheur();
 
 };
 

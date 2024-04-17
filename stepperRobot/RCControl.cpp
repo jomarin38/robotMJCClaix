@@ -3,9 +3,10 @@
 
 #include <EEPROM.h>
 
-#define LEFT_RIGHT_IN_PIN  14
-#define UP_DOWN_IN_PIN   15
+#define LEFT_RIGHT_IN_PIN  14   // A0 ?
+#define UP_DOWN_IN_PIN   15     // A1 ??
 #define PWM_RELAIS   7
+#define PWM_AFFICHEUR   11
 
 #define REVERSE_THROTTLE
 //#define REVERSE_STEERING
@@ -13,10 +14,12 @@
 uint32_t UpDownStart;
 uint32_t LeftRightStart;
 uint32_t RelaisStart;
+uint32_t AfficheurStart;
 
 volatile uint16_t UpDownEnd = 0;
 volatile uint16_t LeftRightEnd = 0;
 volatile uint16_t RelaisEnd = 0;
+volatile uint16_t AfficheurEnd = 0;
 
 //rc receiver interrupt routine
 //------------------------------------------------------
@@ -63,6 +66,21 @@ void calcRelais()
     RelaisEnd = (uint16_t)(micros() - RelaisStart);
   }
 }
+
+
+//**********************************************************************
+void calcAfficheur()
+{
+  // Serial.println("in Left Right here");
+  if(digitalRead(PWM_AFFICHEUR) == HIGH)
+  {
+    AfficheurStart = micros();
+  }
+  else
+  {
+    AfficheurEnd = (uint16_t)(micros() - AfficheurStart);
+  }
+}
 // RCControl class
 // --------------------------------------------------------
 float RCControl::zero_throttle;
@@ -90,6 +108,7 @@ void RCControl::init()
 	PCintPort::attachInterrupt(UP_DOWN_IN_PIN, calcUpDown,CHANGE);
 	PCintPort::attachInterrupt(LEFT_RIGHT_IN_PIN, calcLeftRight,CHANGE);
   PCintPort::attachInterrupt(PWM_RELAIS, calcRelais,CHANGE);
+  PCintPort::attachInterrupt(PWM_AFFICHEUR, calcAfficheur,CHANGE);
 }
 //***********************************************************************
 void RCControl::calibrateZero() {
@@ -180,6 +199,12 @@ float RCControl::getSteering()
 float RCControl::getRelais() 
 {
 float temp = RelaisEnd;
+return temp;
+}
+//******************************************************************
+float RCControl::getAfficheur() 
+{
+float temp = AfficheurEnd;
 return temp;
 }
 //*************************************************************************

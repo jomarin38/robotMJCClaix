@@ -1,5 +1,5 @@
 //  le programme du robot principal
-// 17/05/2023
+// 17/04/2024
 
 
 //#define DEBUG
@@ -8,9 +8,12 @@
 #include "robot.h"
 #include "RCControl.h"
 #include "TM1637.h"
-#define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
-#define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
+//#define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
+//#define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
+
+#define COMMUNO1 4  // patte UNo pour comm vers arduino pince avant
+#define COMMUNO2 9    // autres pinces valeur à trouver
 
 #define TEMPS_AVANT_DEGUISEMENT 100000
 
@@ -24,6 +27,8 @@ TM1637 tm1637(CLK,DIO);
 
 float throttle;
 float steering;
+float commande_pinces;
+//float commande_afficheur;
 float commande_score;
 int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 //int rcKeyPin = 3;  //Y sur CNC, bouclé à la masse ATTENTION ça perturbe la fonciton moteur !!!
@@ -43,8 +48,11 @@ void setup()
 
   pinMode(rcCalibrationPin, INPUT_PULLUP);
   pinMode(rcKeyPin, INPUT_PULLUP);
-  pinMode(CDE_RELAIS, OUTPUT); // relais eclairage
-  pinMode(PWM_RELAIS, INPUT);// lecture manette RC pour leds
+//  pinMode(CDE_RELAIS, OUTPUT); // relais eclairage
+//  pinMode(PWM_RELAIS, INPUT);// lecture manette RC pour leds
+  
+  pinMode(COMMUNO1, OUTPUT); // comm avec arduino pinces
+  pinMode(COMMUNO2, OUTPUT); // comm avec arduino pinces
 
   /*  pinMode(4, OUTPUT);
     pinMode(7, OUTPUT);
@@ -96,16 +104,7 @@ void setup()
     control.initializeFromEEPROM();
   }
   r.stop(1);
-  allumerDeguissement(false);
 
-}
-
-void allumerDeguissement(bool allumer){
-  if(allumer == true){
-    digitalWrite(CDE_RELAIS, HIGH);  }
-  else{
-    digitalWrite(CDE_RELAIS, LOW);
-  }
 }
 
 void displayInt(int value) {
@@ -132,7 +131,8 @@ void loop()
   //lecture commandes
   throttle = control.getThrottle();
   steering = control.getSteering();
-  commande_score = control.getRelais();
+  commande_pinces = control.getRelais();
+  commande_score = control.getAfficheur();
 
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
@@ -148,23 +148,19 @@ void loop()
     
   uint32_t chrono_ms = micros() / 1000;
 
-  if(chrono_ms >= TEMPS_AVANT_DEGUISEMENT ){
-    allumerDeguissement(true);
-  }  
-
-  if( chrono_ms > (temps_dernier_score + TEMPS_ENTRE_2_AFFICHAGES_MS) ){ 
-      //score
-      if (commande_score > 1800) {
-        
-        score = score + 1;
-      }
-      if (commande_score < 1100) {
-        score = score - 1;
-      }
-      temps_dernier_score = chrono_ms;
-      displayInt(score);
-
+  if (commande_pinces > 1800) 
+  {
+     digitalWrite(COMMUNO1, LOW);
   }
+  else
+      digitalWrite(COMMUNO1, HIGH);
+  //---------------------------------    
+   if (commande_score > 1800) 
+    {
+     digitalWrite(COMMUNO2, LOW);
+  }
+  else
+      digitalWrite(COMMUNO2, HIGH);
 
   delay(50);
 
