@@ -14,6 +14,7 @@
 
 #define COMMUNO1 4  // patte UNo pour comm vers arduino pince avant
 #define COMMUNO2 9    // autres pinces valeur à trouver
+#define COMMUNO3 6
 
 #define TEMPS_AVANT_DEGUISEMENT 100000
 
@@ -27,9 +28,10 @@ TM1637 tm1637(CLK,DIO);
 
 float throttle;
 float steering;
-float commande_pinces;
-//float commande_afficheur;
-float commande_score;
+float commande_pince1;
+float commande_pince2;
+float commande_pince3;
+
 int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
 //int rcKeyPin = 3;  //Y sur CNC, bouclé à la masse ATTENTION ça perturbe la fonciton moteur !!!
 int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
@@ -53,6 +55,7 @@ void setup()
   
   pinMode(COMMUNO1, OUTPUT); // comm avec arduino pinces
   pinMode(COMMUNO2, OUTPUT); // comm avec arduino pinces
+  pinMode(COMMUNO3, OUTPUT); // comm avec arduino pinces
 
   /*  pinMode(4, OUTPUT);
     pinMode(7, OUTPUT);
@@ -131,15 +134,18 @@ void loop()
   //lecture commandes
   throttle = control.getThrottle();
   steering = control.getSteering();
-  commande_pinces = control.getRelais();
-  commande_score = control.getAfficheur();
+  commande_pince1 = control.getPince1();
+  commande_pince2 = control.getPince2();
+  commande_pince3 = control.getPince3();
 
   if (-CMD_MIN_MAX_FILTRE < throttle && throttle < CMD_MIN_MAX_FILTRE) throttle = 0;
   if (-CMD_MIN_MAX_FILTRE < steering && steering < CMD_MIN_MAX_FILTRE) steering = 0;
 
   //Serial.print("throttle="); Serial.print(throttle);
   //Serial.print("steering="); Serial.println(steering);
-  //Serial.print("commande led="); Serial.println(commande_score);
+  Serial.print("pince1="); Serial.println(commande_pince1);
+  Serial.print("pince2="); Serial.println(commande_pince2);
+  Serial.print("pince3="); Serial.println(commande_pince3);
 
   r.setMovingSpeeds(
     throttle,
@@ -148,19 +154,27 @@ void loop()
     
   uint32_t chrono_ms = micros() / 1000;
 
-  if (commande_pinces > 1800) 
+  if (commande_pince1 > 1800) 
   {
      digitalWrite(COMMUNO1, LOW);
   }
   else
       digitalWrite(COMMUNO1, HIGH);
   //---------------------------------    
-   if (commande_score > 1800) 
+   if (commande_pince2 > 1800) 
     {
      digitalWrite(COMMUNO2, LOW);
   }
   else
       digitalWrite(COMMUNO2, HIGH);
+
+   if (commande_pince3 > 1800) 
+    {
+     digitalWrite(COMMUNO3, LOW);
+  }
+  else
+      digitalWrite(COMMUNO3, HIGH);
+
 
   delay(50);
 

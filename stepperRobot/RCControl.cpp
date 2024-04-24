@@ -3,10 +3,11 @@
 
 #include <EEPROM.h>
 
-#define LEFT_RIGHT_IN_PIN  14   // A0 ?
-#define UP_DOWN_IN_PIN   15     // A1 ??
-#define PWM_RELAIS   7
-#define PWM_AFFICHEUR   11
+#define LEFT_RIGHT_IN_PIN  14   // A0 ?  ABORT
+#define UP_DOWN_IN_PIN   15     // A1 ?? HOLD
+#define PWM_RELAIS   7                // Z DIR
+#define PWM_AFFICHEUR   11            // Z+
+#define PWM_PINCE3   16               // RESUME
 
 #define REVERSE_THROTTLE
 //#define REVERSE_STEERING
@@ -15,11 +16,13 @@ uint32_t UpDownStart;
 uint32_t LeftRightStart;
 uint32_t RelaisStart;
 uint32_t AfficheurStart;
+uint32_t Pince3Start;
 
 volatile uint16_t UpDownEnd = 0;
 volatile uint16_t LeftRightEnd = 0;
 volatile uint16_t RelaisEnd = 0;
 volatile uint16_t AfficheurEnd = 0;
+volatile uint16_t Pince3End = 0;
 
 //rc receiver interrupt routine
 //------------------------------------------------------
@@ -81,6 +84,19 @@ void calcAfficheur()
     AfficheurEnd = (uint16_t)(micros() - AfficheurStart);
   }
 }
+//**********************************************************************
+void calcPince3()
+{
+  // Serial.println("in Left Right here");
+  if(digitalRead(PWM_PINCE3) == HIGH)
+  {
+    Pince3Start = micros();
+  }
+  else
+  {
+    Pince3End = (uint16_t)(micros() - Pince3Start);
+  }
+}
 // RCControl class
 // --------------------------------------------------------
 float RCControl::zero_throttle;
@@ -109,6 +125,7 @@ void RCControl::init()
 	PCintPort::attachInterrupt(LEFT_RIGHT_IN_PIN, calcLeftRight,CHANGE);
   PCintPort::attachInterrupt(PWM_RELAIS, calcRelais,CHANGE);
   PCintPort::attachInterrupt(PWM_AFFICHEUR, calcAfficheur,CHANGE);
+  PCintPort::attachInterrupt(PWM_PINCE3, calcPince3,CHANGE);
 }
 //***********************************************************************
 void RCControl::calibrateZero() {
@@ -196,15 +213,20 @@ float RCControl::getSteering()
 	}
 }
 //******************************************************************
-float RCControl::getRelais() 
+float RCControl::getPince2() 
 {
 float temp = RelaisEnd;
 return temp;
 }
 //******************************************************************
-float RCControl::getAfficheur() 
+float RCControl::getPince1() 
 {
 float temp = AfficheurEnd;
+return temp;
+}
+float RCControl::getPince3() 
+{
+float temp = Pince3End;
 return temp;
 }
 //*************************************************************************
