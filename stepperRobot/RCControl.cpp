@@ -6,7 +6,7 @@
 #define LEFT_RIGHT_IN_PIN  14   // A0 ?  ABORT
 #define UP_DOWN_IN_PIN   15     // A1 ?? HOLD
 #define PWM_RELAIS   7                // Z DIR
-#define PWM_AFFICHEUR   11            // Z+
+#define PWM_AFFICHEUR   17            // CoolEn
 #define PWM_PINCE3   16               // RESUME
 
 #define REVERSE_THROTTLE

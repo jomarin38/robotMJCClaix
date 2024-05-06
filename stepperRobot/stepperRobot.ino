@@ -1,20 +1,16 @@
 //  le programme du robot principal
-// 17/04/2024
+// 06/05/2024
 
 
 //#define DEBUG
-// relais en 8, 4, 7 et 12
-// relais 1 en 4
 #include "robot.h"
 #include "RCControl.h"
 #include "TM1637.h"
-//#define CDE_RELAIS   4 // patte arduino branchement realis realis commande lumière
-//#define PWM_RELAIS   7 // patte arduino branchement telcommande voie hG
 #define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
 
 #define COMMUNO1 4  // patte UNo pour comm vers arduino pince avant
-#define COMMUNO2 9    // autres pinces valeur à trouver
-#define COMMUNO3 6
+#define COMMUNO2 9    // X Endstop
+#define COMMUNO3 12   //SpinEn
 
 #define TEMPS_AVANT_DEGUISEMENT 100000
 
@@ -168,13 +164,14 @@ void loop()
   else
       digitalWrite(COMMUNO2, HIGH);
 
+
    if (commande_pince3 > 1800) 
     {
      digitalWrite(COMMUNO3, LOW);
   }
   else
       digitalWrite(COMMUNO3, HIGH);
-
+      
 
   delay(50);
 
