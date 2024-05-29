@@ -6,11 +6,11 @@
 #include "robot.h"
 #include "RCControl.h"
 #include "TM1637.h"
-#define CMD_MIN_MAX_FILTRE 5 //valeur pour filtrer autour du zero pour av/ar et G/D
+#define CMD_MIN_MAX_FILTRE 10 //valeur pour filtrer autour du zero pour av/ar et G/D
 
 #define COMMUNO1 4  // patte UNo pour comm vers arduino pince avant
 #define COMMUNO2 9    // X Endstop
-#define COMMUNO3 12   //SpinEn
+#define COMMUNO3 10   //SpinEn
 
 #define TEMPS_AVANT_DEGUISEMENT 100000
 

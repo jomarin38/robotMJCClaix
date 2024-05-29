@@ -224,8 +224,8 @@ void StepperControler::setMotorSpeed (int i, int16_t tspeed)   // motor = 1 or 2
 	else
 		OCR1B += timer_period[1];
   
-  Serial.print("T1:");Serial.print(targetMotorSpeed[0]);Serial.print(",T2:");Serial.print(targetMotorSpeed[1]);
-  Serial.print(",M1:");Serial.print(motorSpeed[0]);Serial.print(",M2:");Serial.println(motorSpeed[1]);
+  //Serial.print("T1:");Serial.print(targetMotorSpeed[0]);Serial.print(",T2:");Serial.print(targetMotorSpeed[1]);
+  //Serial.print(",M1:");Serial.print(motorSpeed[0]);Serial.print(",M2:");Serial.println(motorSpeed[1]);
   
 
 }
