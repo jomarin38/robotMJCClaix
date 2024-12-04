@@ -2,9 +2,7 @@
 // 06/11/2024 /sjr
 
 
-//#define DEBUG
 #include "RCControl.h"
-//#include "TM1637.h"
 #define CMD_MIN_MAX_FILTRE 10 //valeur pour filtrer autour du zero pour av/ar et G/D
 
 //*******************************************************************************//
@@ -27,7 +25,6 @@
 #define borneArENB        3      // On associe la borne "ENB" du L298N à la pin D5 de l'arduino
 
 RCControl control;
-//Robot r;
 
 
 float vitesse = 0;
@@ -40,24 +37,14 @@ float direction = 0;
 float direction_lateral = 0;
 
 
-//int rcCalibrationPin = 2;  //  X sur CNC, à boucler au 5V
-//int rcKeyPin = 5;  //X_dir sur CNC, bouclé à la masse
-
 // INITIALIZATION
 void setup()
 {
-  //pinMode(rcCalibrationPin, INPUT_PULLUP);
-  //pinMode(rcKeyPin, INPUT_PULLUP);
 
   Serial.begin(115200); // Serial output to console
   delay(200);
   //Serial.println("Programme Stepper version du 17/03/2023");
 
-  //Serial.println("Départ");
-  // STEPPER MOTORS INITIALIZATION
-  //Serial.println("Steper motors initialization...");
-//  r.init();
-//  r.setSmooth(false);
   control.init();
   // Configuration de toutes les pins de l'Arduino en "sortie" (car elles attaquent les entrées du module L298N)
   pinMode(borneAvENA, OUTPUT);
@@ -87,9 +74,6 @@ void setup()
     Serial.println("Storing zero values ...");
     control.calibrateZero();
 
-//    r.move(10, 1);
-//    r.stop(1);
-
     Serial.println("Computing maximum values ...");
     Serial.println("Move sticks to maximum values ...");
     control.calibrateInputs();
@@ -98,34 +82,15 @@ void setup()
 
     control.writeToEEPROM();
 
-
-//    r.move(-10, 1);
   }
   else {
     //Serial.println("reading the calibration settings.");
     control.initializeFromEEPROM();
   }
-//  r.stop(1);
+
   delay(1000);
 }
-/*
-void conversion(float in_vitesse, float in_direction, float *out_vitesse_M1, float *out_vitesse_M2)
-{
-  
-  float turnProportion = 4.0;
-  if (abs(in_vitesse) < 50.0) {
-    turnProportion = 1.0;
-  }
-  float maxValue = 1.0 + 1.0/turnProportion;
 
-  *out_vitesse_M1 = (in_vitesse + in_direction / turnProportion) / maxValue / 2.0 / 100 * 255 ;
-  *out_vitesse_M2 = (in_vitesse - in_direction / turnProportion) / maxValue / 2.0 / 100 * 255;
-
-  *out_vitesse_M1 = (255 / 100 ) * *out_vitesse_M1;
-  *out_vitesse_M2 = (255 / 100 ) * *out_vitesse_M2;
-  
-}
-*/
 void conversion_4M(float in_vitesse, float in_direction, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
 {
   
@@ -145,61 +110,8 @@ void conversion_4M(float in_vitesse, float in_direction, float *out_vitesse_M1, 
   
 }
 
-void conversion_4M_normalise(float in_vitesse, float in_direction, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
-{
-  
-  float turnProportion = 1.5;
-  float pourcentage_puissance = 0.4;
-  float min = 0;
-  
-  if(-3.0 < in_vitesse && in_vitesse < 3.0) in_vitesse = 0.0;
-  if(-3.0 < in_direction && in_direction < 3.0) in_direction = 0.0;
-  if(in_vitesse == 0 && in_direction == 0) min = 0;
 
-  *out_vitesse_M1 = (in_vitesse + in_direction / turnProportion);
-  *out_vitesse_M2 = (in_vitesse - in_direction / turnProportion);
-  Serial.print("A: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-
-  if(abs(*out_vitesse_M1) > 100 || abs(*out_vitesse_M2) > 100)
-  {
-    float max = max(abs(*out_vitesse_M1), abs(*out_vitesse_M2));
-    *out_vitesse_M1 = *out_vitesse_M1 / max * 100;
-    *out_vitesse_M2 = *out_vitesse_M2 / max * 100;
-    Serial.print(" A: MAX:"); 
-    Serial.print(max);  
-  }
-  Serial.print(" B: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-
-  *out_vitesse_M1 = (255.0 / 100.0 ) * *out_vitesse_M1 * pourcentage_puissance;
-  *out_vitesse_M2 = (255.0 / 100.0 ) * *out_vitesse_M2 * pourcentage_puissance;
-  //float temp_M1 = (((255.0  - min) / 100.0 ) * abs(*out_vitesse_M1) + min )* pourcentage_puissance;
-  //float temp_M2 = (((255.0 - min) / 100.0 ) * abs(*out_vitesse_M2) + min ) * pourcentage_puissance;
-  
-  //if(*out_vitesse_M1 >= 0) *out_vitesse_M1 = temp_M1;
-  //else  *out_vitesse_M1 = -temp_M1;
-  //if(*out_vitesse_M2 >= 0) *out_vitesse_M2 = temp_M2;
-  //else  *out_vitesse_M2 = -temp_M2;
- 
-  Serial.print(" C: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-  Serial.println("");
-  *out_vitesse_M3 = *out_vitesse_M1;
-  *out_vitesse_M4 = *out_vitesse_M2;
-  
-}
-
-void conversion_4M_normalise2(float in_vitesse, float in_direction, float direction_lateral, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
+void conversion_4M_normalise(float in_vitesse, float in_direction, float direction_lateral, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
 {
   
   float turnProportion = 2;
@@ -243,13 +155,6 @@ void conversion_4M_normalise2(float in_vitesse, float in_direction, float direct
   *out_vitesse_M2 = (255.0 / 100.0 ) * *out_vitesse_M2 * pourcentage_puissance;
   *out_vitesse_M3 = (255.0 / 100.0 ) * *out_vitesse_M3 * pourcentage_puissance;
   *out_vitesse_M4 = (255.0 / 100.0 ) * *out_vitesse_M4 * pourcentage_puissance;
-  //float temp_M1 = (((255.0  - min) / 100.0 ) * abs(*out_vitesse_M1) + min )* pourcentage_puissance;
-  //float temp_M2 = (((255.0 - min) / 100.0 ) * abs(*out_vitesse_M2) + min ) * pourcentage_puissance;
-  
-  //if(*out_vitesse_M1 >= 0) *out_vitesse_M1 = temp_M1;
-  //else  *out_vitesse_M1 = -temp_M1;
-  //if(*out_vitesse_M2 >= 0) *out_vitesse_M2 = temp_M2;
-  //else  *out_vitesse_M2 = -temp_M2;
  
   Serial.print(" C: out_vitesse_M1:"); 
   Serial.print(*out_vitesse_M1);
@@ -257,13 +162,8 @@ void conversion_4M_normalise2(float in_vitesse, float in_direction, float direct
   Serial.print(",out_vitesse_M2:"); 
   Serial.print(*out_vitesse_M2);
   Serial.println("");
-  //analogWrite(borneAvENA, abs(*out_vitesse_M1));
-  //analogWrite(borneAvENB, abs(*out_vitesse_M2));
-
-  //analogWrite(borneArENA, abs(*out_vitesse_M3));
-  //analogWrite(borneArENB, abs(*out_vitesse_M4));
-
-}
+ 
+ }
 
 
 
@@ -326,12 +226,8 @@ void loop()
   vitesse = control.getThrottle();
   direction = control.getSteering();
   direction_lateral = control.getLatSteering();
-  //conversion_4M_normalise(vitesse, -direction, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
-  conversion_4M_normalise2(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
-
- commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
-
-
+  conversion_4M_normalise(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
+  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
 
   Serial.print("vitesse:"); 
   Serial.print(vitesse);
