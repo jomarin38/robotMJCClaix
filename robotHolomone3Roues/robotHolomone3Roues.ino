@@ -35,6 +35,7 @@ float vitesse_M4 = 0;
 float seuil_bas = 25;
 float direction = 0;
 float direction_lateral = 0;
+float sw5 = 0;
 
 
 // INITIALIZATION
@@ -81,6 +82,7 @@ void setup()
     Serial.println("Calibration process finished.");
 
     control.writeToEEPROM();
+		//delay(4000);
 
   }
   else {
@@ -110,7 +112,7 @@ void conversion_4M(float in_vitesse, float in_direction, float *out_vitesse_M1, 
   
 }
 
-void conversion_4M_holonome(float in_vitesse, float in_direction, float in_slide, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3)
+void conversion_3M_holonome(float in_vitesse, float in_direction, float in_slide, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3)
 {
   
   *out_vitesse_M1 = -0.33 * in_slide + 0.58 * in_vitesse + 0.33 * in_direction;
@@ -121,7 +123,7 @@ void conversion_4M_holonome(float in_vitesse, float in_direction, float in_slide
   *out_vitesse_M2 = *out_vitesse_M2 * 255.0/58.0;
   *out_vitesse_M3 = *out_vitesse_M3 * 255.0/58.0;
   
-  float max_val = max(max(*out_vitesse_M1, *out_vitesse_M2), *out_vitesse_M3);
+  float max_val = max(max(abs(*out_vitesse_M1), abs(*out_vitesse_M2)), abs(*out_vitesse_M3));
   float coeff = 1;
   if (max_val>255) {
     coeff = 255.0/max_val;
@@ -249,9 +251,12 @@ void loop()
   vitesse = control.getThrottle();
   direction = control.getSteering();
   direction_lateral = control.getLatSteering();
+  sw5 = control.getSW5();
+
   //conversion_4M_normalise(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
-  conversion_4M_holonome(-vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );
+  conversion_3M_holonome(-vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );
   commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
+  //commande(0, 0, 0, 0);
   vitesse_M4 = 0;
 
   Serial.print("vitesse:"); 
@@ -261,6 +266,8 @@ void loop()
   Serial.print(direction);
   Serial.print(",direction_lateral:"); 
   Serial.print(direction_lateral);
+  Serial.print(",sw5:"); 
+  Serial.print(sw5);
 //  Serial.print(",");
   Serial.print(",vitesse_M1:"); 
   Serial.print(vitesse_M1);

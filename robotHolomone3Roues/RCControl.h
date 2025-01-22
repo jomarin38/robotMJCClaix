@@ -7,12 +7,15 @@ struct CalibrationData {
   float zero_throttle;
   float zero_steering;
   float zero_latSteering;
+  float zero_SW5;
   float max_throttle_coeff;
   float max_steering_coeff;
   float max_lat_steering_coeff;
+  float max_SW5_coeff;
   float min_throttle_coeff;
   float min_steering_coeff;
   float min_lat_steering_coeff;
+  float min_SW5_coeff;
 };
 
 class RCControl 
@@ -23,17 +26,21 @@ class RCControl
 		static float zero_throttle;
 		static float zero_steering;
     static float zero_latSteering;
+    static float zero_SW5;
 
 		static float max_throttle_coeff;
 		static float max_steering_coeff;
 		static float max_lat_steering_coeff;
+		static float max_SW5_coeff;
 		static float min_throttle_coeff;
 		static float min_steering_coeff;
 		static float min_lat_steering_coeff;
+		static float min_SW5_coeff;
 		
 		static int throttle_amplitude;
 		static int steering_amplitude;
 		static int lat_steering_amplitude;
+		static int SW5_amplitude;
 	
 	public:
 	
@@ -56,7 +63,7 @@ class RCControl
 		static float getThrottle();
 		static float getSteering();
     static float getLatSteering();
-
+    static float getSW5();
 };
 
 #endif
