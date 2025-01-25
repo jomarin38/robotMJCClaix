@@ -242,7 +242,7 @@ void loop()
   //Serial.print(",");
   Serial.print(",vitesse_M2:"); 
   Serial.println(vitesse_M2);
-  delay(200);
+  //delay(200);
 
 }
 
