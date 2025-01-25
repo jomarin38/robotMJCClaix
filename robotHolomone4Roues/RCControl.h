@@ -2,60 +2,42 @@
 #define RCCONTROL
 
 #include <Arduino.h>
-
+#include "RCChannel.h"
+#define NB_CHANNELS 10
+// NB_CHANNELS * [zero, min_coeff, max_coeff]
 struct CalibrationData {
-  float zero_throttle;
-  float zero_steering;
-  float zero_latSteering;
-  float max_throttle_coeff;
-  float max_steering_coeff;
-  float max_lat_steering_coeff;
-  float min_throttle_coeff;
-  float min_steering_coeff;
-  float min_lat_steering_coeff;
+  float data[NB_CHANNELS * 3];
 };
 
-class RCControl 
-{
-	
-	protected : 
-	
-		static float zero_throttle;
-		static float zero_steering;
-    static float zero_latSteering;
+class RCControl {
+private: 
 
-		static float max_throttle_coeff;
-		static float max_steering_coeff;
-		static float max_lat_steering_coeff;
-		static float min_throttle_coeff;
-		static float min_steering_coeff;
-		static float min_lat_steering_coeff;
-		
-		static int throttle_amplitude;
-		static int steering_amplitude;
-		static int lat_steering_amplitude;
+  char nbChannels;
+//protected : 
 	
-	public:
+	
+public:
+    RCChannel rchannel2[NB_CHANNELS];
 	
 		RCControl();
-		~RCControl() {}
 
-		static void init();
+		void init();
 		
-		static void calibrateZero();
-		static void calibrateInputs();
+		void calibrateZero();
+		void calibrateInputs();
 
-    static void initializeFromEEPROM();
-    static void writeToEEPROM();
-		
-		static void setTrottleAmplitude(int a) {throttle_amplitude = a;}
-		static void setSteeringAmplitude(int a) {steering_amplitude = a;}
-    static void setLatSteeringAmplitude(int a) {lat_steering_amplitude = a;}
-    
-		
-		static float getThrottle();
-		static float getSteering();
-    static float getLatSteering();
+    void initializeFromEEPROM();
+    void writeToEEPROM();
+		    
+
+
+    void debugInterrupt();
+    void debugCalibration();
+
+		float getThrottle();
+		float getSteering();
+    float getLatSteering();
+    float getSW5();
 
 };
 
