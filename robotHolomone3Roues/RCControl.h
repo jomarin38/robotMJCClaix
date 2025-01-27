@@ -38,6 +38,9 @@ public:
 		float getSteering();
     float getLatSteering();
     float getSW5();
+    float getSW6();
+    float getSW7();
+    float getSW8();
 
 };
 

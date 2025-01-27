@@ -9,15 +9,18 @@
 RCControl control;
 
 
-float vitesse = 0;
 float vitesse_M1 = 0;
 float vitesse_M2 = 0;
 float vitesse_M3 = 0;
 float vitesse_M4 = 0;
-float seuil_bas = 25;
+//float seuil_bas = 25;
+float vitesse = 0;
 float direction = 0;
 float direction_lateral = 0;
 float sw5 = 0;
+float sw6 = 0;
+float sw7 = 0;
+float sw8 = 0;
 
 
 // INITIALIZATION
@@ -239,6 +242,9 @@ void loop()
   direction = control.getSteering();
   direction_lateral = control.getLatSteering();
   sw5 = control.getSW5();
+  sw6 = control.getSW6();
+  sw7 = control.getSW7();
+  sw8 = control.getSW8();
 
   //conversion_4M_normalise(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
   conversion_3M_holonome(vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );

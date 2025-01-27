@@ -228,3 +228,16 @@ float RCControl::getSW5()
   return rchannel2[3].getValue();
 }
 
+float RCControl::getSW6() 
+{
+  return rchannel2[4].getValue();
+}
+
+float RCControl::getSW7() 
+{
+  return rchannel2[5].getValue();
+}
+float RCControl::getSW8() 
+{
+  return rchannel2[6].getValue();
+}
