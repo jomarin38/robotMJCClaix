@@ -56,22 +56,24 @@ int RCChannel::getPinValue() const {
 float RCChannel::getValue() {
   float temp = end - zero_timing;
 	if(channelType == Channel_type::TYPE_PROPORTIONNEL){
-    if (temp > 0) {
+    if (temp > 2) {
       return temp * max_coeff;
     }
-    else {
+    else if (temp < -2){
       return temp * min_coeff;
     }
+    else
+      return 0;
   } else if(channelType == Channel_type::TYPE_SWITCH_2_POSITIONS){
-    if(temp < 0)
+    if(temp < 0 && abs(temp) > (amplitude / 5) )
       return -amplitude;
     else
       return amplitude;    
 
   } else if(channelType == Channel_type::TYPE_SWITCH_3_POSITIONS){
-    if(temp > amplitude/10)
+    if(temp > amplitude/3)
       return amplitude;
-    else if(temp < -amplitude / 10){
+    else if(temp < -amplitude / 3){
       return -amplitude;
     } else {
       return 0;
@@ -130,6 +132,7 @@ void RCChannel::calibrateZero(){
 
 void RCChannel::calibrateZeroAverage(int nSamples){
   		zero_timing = zero_timing/nSamples;
+      min_timing = zero_timing; //pour donner une valeur à min sinon min reste eqal à zero.
 }
 
 
@@ -146,14 +149,14 @@ void RCChannel::calibrateInputsEnd(){
   max_coeff = (float)amplitude / (float)(max_timing - zero_timing);
 	min_coeff = (float)amplitude / (float)(zero_timing - min_timing);
 
-  // Serial.println("channel \t| amplitude \t | min_timing \t| zero_timing \t| max_timing \t| min_coeff \t| max_coeff");
-  // Serial.print(channelNumber);Serial.print("\t\t| ");
-  // Serial.print(amplitude);Serial.print("\t\t| ");
-  // Serial.print((int)min_timing);Serial.print("\t\t| ");
-  // Serial.print((int)zero_timing);Serial.print("\t\t| ");
-  // Serial.print((int)max_timing);Serial.print("\t\t| ");
-  // Serial.print(min_coeff);Serial.print("\t\t| ");
-  // Serial.println(max_coeff);
+  Serial.println("channel \t| amplitude \t | min_timing \t| zero_timing \t| max_timing \t| min_coeff \t| max_coeff");
+  Serial.print(channelNumber);Serial.print("\t\t| ");
+  Serial.print(amplitude);Serial.print("\t\t| ");
+  Serial.print((int)min_timing);Serial.print("\t\t| ");
+  Serial.print((int)zero_timing);Serial.print("\t\t| ");
+  Serial.print((int)max_timing);Serial.print("\t\t| ");
+  Serial.print(min_coeff);Serial.print("\t\t| ");
+  Serial.println(max_coeff);
 
 
 

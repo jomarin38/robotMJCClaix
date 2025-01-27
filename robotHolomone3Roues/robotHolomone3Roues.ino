@@ -40,27 +40,30 @@ void setup()
   pinMode(borneArENA, OUTPUT);
   pinMode(borneArIN1, OUTPUT);
   pinMode(borneArIN2, OUTPUT);
-  pinMode(borneArIN3, OUTPUT);
-  pinMode(borneArIN4, OUTPUT);
-  pinMode(borneArENB, OUTPUT);
+//  pinMode(borneArIN3, OUTPUT);
+//  pinMode(borneArIN4, OUTPUT);
+//  pinMode(borneArENB, OUTPUT);
 
   analogWrite(borneAvENA, 0);
   analogWrite(borneAvENB, 0);
 
   analogWrite(borneArENA, 0);
-  analogWrite(borneArENB, 0);
+// analogWrite(borneArENB, 0);
 
 //  if (digitalRead(rcCalibrationPin) == HIGH) {
-  if (1) {
+  if (0) {
   
     Serial.println("Beginning calibration process ...");
+    delay(20);
     Serial.println("Storing zero values ...");
     control.calibrateZero();
-
+    delay(20);
     Serial.println("Move sticks to maximum values ...");
+    delay(20);
     control.calibrateInputs();
-
+    delay(20);
     control.debugCalibration();
+    delay(20);
     Serial.println("Calibration process finished.");
 
     control.writeToEEPROM();
@@ -211,21 +214,21 @@ void commande( float throttle_M1, float throttle_M2, float throttle_M3, float th
     digitalWrite(borneArIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
   }
 
-  if(throttle_M4 > 0)
-  {
-    digitalWrite(borneArIN3, HIGH);                 // L'entrée IN1 doit être au niveau haut
-    digitalWrite(borneArIN4, LOW);                  // L'entrée IN2 doit être au niveau bas
+  // if(throttle_M4 > 0)
+  // {
+  //   digitalWrite(borneArIN3, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  //   digitalWrite(borneArIN4, LOW);                  // L'entrée IN2 doit être au niveau bas
 
-  } else {
-    digitalWrite(borneArIN3, LOW);                 // L'entrée IN1 doit être au niveau haut
-    digitalWrite(borneArIN4, HIGH);                  // L'entrée IN2 doit être au niveau bas
-  }
+  // } else {
+  //   digitalWrite(borneArIN3, LOW);                 // L'entrée IN1 doit être au niveau haut
+  //   digitalWrite(borneArIN4, HIGH);                  // L'entrée IN2 doit être au niveau bas
+  // }
 
   analogWrite(borneAvENA, abs(throttle_M1));
   analogWrite(borneAvENB, abs(throttle_M2));
 
   analogWrite(borneArENA, abs(throttle_M3));
-  analogWrite(borneArENB, abs(throttle_M4));
+//  analogWrite(borneArENB, abs(throttle_M4));
 }
 
 
@@ -238,29 +241,15 @@ void loop()
   sw5 = control.getSW5();
 
   //conversion_4M_normalise(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
-  conversion_3M_holonome(-vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );
-//  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
+  conversion_3M_holonome(vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );
+  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
   //commande(0, 0, 0, 0);
   vitesse_M4 = 0;
 
-control.debugInterrupt();
-//   Serial.print("vitesse:"); 
-//   Serial.print(vitesse);
-// //  Serial.print(",");
-//   Serial.print(",direction:"); 
-//   Serial.print(direction);
-//   Serial.print(",direction_lateral:"); 
-//   Serial.print(direction_lateral);
-//   Serial.print(",sw5:"); 
-//   Serial.print(sw5);
-// //  Serial.print(",");
-//   Serial.print(",vitesse_M1:"); 
-//   Serial.print(vitesse_M1);
-//   //Serial.print(",");
-//   Serial.print(",vitesse_M2:"); 
-//   Serial.println(vitesse_M2);
-//   Serial.print(",vitesse_M3:"); 
-//   Serial.println(vitesse_M3);
-  delay(200);
+  control.debugInterrupt();
+ 
+  // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
+  // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
+ delay(100);
 
 }

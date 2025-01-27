@@ -24,9 +24,22 @@ void calcLateralGaucheDroite()
     control.rchannel2[2].calcInterrupt();
 }
 // //**********************************************************************
-void calcNouvelleVoie()
+void calcSW5()
 {
     control.rchannel2[3].calcInterrupt();
+}
+// //**********************************************************************
+void calcSW6()
+{
+    control.rchannel2[4].calcInterrupt();
+}
+void calcSW7()
+{
+    control.rchannel2[5].calcInterrupt();
+}
+void calcSW8()
+{
+    control.rchannel2[6].calcInterrupt();
 }
 // void calcSW5()
 // {
@@ -44,14 +57,23 @@ RCControl::RCControl()
   for(char i = 0; i < nbChannels; i++){
     rchannel2[i].setChannelNumber(i);  
   }
-  rchannel2[0].setPinValue(LEFT_RIGHT_IN_PIN);
+  rchannel2[0].setPinValue(UP_DOWN_IN_PIN);
   rchannel2[0].setChannelType(Channel_type::TYPE_PROPORTIONNEL);
-  rchannel2[1].setPinValue(UP_DOWN_IN_PIN);
+  rchannel2[1].setPinValue(LEFT_RIGHT_IN_PIN);
   rchannel2[1].setChannelType(Channel_type::TYPE_PROPORTIONNEL);
   rchannel2[2].setPinValue(LAT_LEFT_RIGHT_PIN);
   rchannel2[2].setChannelType(Channel_type::TYPE_PROPORTIONNEL);
   rchannel2[3].setPinValue(SW5_PIN);
-  rchannel2[3].setChannelType(Channel_type::TYPE_SWITCH_2_POSITIONS);
+  rchannel2[3].setChannelType(Channel_type::TYPE_SWITCH_3_POSITIONS);
+
+  rchannel2[4].setPinValue(SW6_PIN);
+  rchannel2[4].setChannelType(Channel_type::TYPE_SWITCH_2_POSITIONS);
+
+  rchannel2[5].setPinValue(SW7_PIN);
+  rchannel2[5].setChannelType(Channel_type::TYPE_SWITCH_2_POSITIONS);
+
+  rchannel2[6].setPinValue(SW8_PIN);
+  rchannel2[6].setChannelType(Channel_type::TYPE_SWITCH_3_POSITIONS);
 
 }
 //****************************************************************
@@ -64,15 +86,18 @@ void RCControl::init()
   PCintPort::attachInterrupt(rchannel2[0].getPinValue(), calcAvantArriere,CHANGE);
   PCintPort::attachInterrupt(rchannel2[1].getPinValue(), calcGaucheDroite,CHANGE);
   PCintPort::attachInterrupt(rchannel2[2].getPinValue(), calcLateralGaucheDroite,CHANGE);
-  PCintPort::attachInterrupt(rchannel2[3].getPinValue(), calcNouvelleVoie,CHANGE);
+  PCintPort::attachInterrupt(rchannel2[3].getPinValue(), calcSW5,CHANGE);
+  PCintPort::attachInterrupt(rchannel2[4].getPinValue(), calcSW6,CHANGE);
+  PCintPort::attachInterrupt(rchannel2[5].getPinValue(), calcSW7,CHANGE);
+  PCintPort::attachInterrupt(rchannel2[6].getPinValue(), calcSW8,CHANGE);
 }
 
 //***********************************************************************
 void RCControl::calibrateZero() {
-	int nSamples = 5000;
+	int nSamples = 100;
 	for (uint16_t k = 0; k < nSamples; k++)
 	{
-		delay(1);
+		delay(40);
     for(int i =0; i<nbChannels; i++){
       rchannel2[i].calibrateZero();
     }
@@ -85,7 +110,7 @@ void RCControl::calibrateZero() {
 void RCControl::calibrateInputs()
 {	
 	//Compute Minimum and maximum values during x samples
-	for (uint16_t k = 0; k < 100; k++)
+	for (uint16_t k = 0; k < 150; k++)
 	{
     for(int i = 0; i < nbChannels; i++){
       rchannel2[i].calibrateInputs();
@@ -158,19 +183,19 @@ void RCControl::debugCalibration()
   Serial.println("--------------------------------");
   Serial.println("[min, zero, max]");
   for(int i =0; i<NB_CHANNELS; i++){
-    Serial.print(" ");Serial.print(i);Serial.print("\t\t | ");     
+    Serial.print(" ");Serial.print(i);Serial.print("\t\t\t | ");     
   }
   Serial.println("");
 
   for(int i =0; i<NB_CHANNELS; i++){
     Serial.print((int)rchannel2[i].getMinTiming());Serial.print(" "); 
     Serial.print((int)rchannel2[i].getZeroTiming());Serial.print(" "); 
-    Serial.print((int)rchannel2[i].getMaxTiming());Serial.print("\t | "); 
+    Serial.print((int)rchannel2[i].getMaxTiming());Serial.print("\t\t | "); 
   }
   Serial.println("");
   Serial.println("[min_coeff, max_coeff]");
   for(int i =0; i<NB_CHANNELS; i++){
-    Serial.print(" ");Serial.print(i);Serial.print("\t | ");     
+    Serial.print(" ");Serial.print(i);Serial.print("\t\t | ");     
   }
   Serial.println("");
 
