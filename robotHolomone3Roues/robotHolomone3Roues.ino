@@ -84,25 +84,6 @@ void setup()
   delay(1000);
 }
 
-void conversion_4M(float in_vitesse, float in_direction, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
-{
-  
-  float turnProportion = 4.0;
-  if (abs(in_vitesse) < 50.0) {
-    turnProportion = 1.0;
-  }
-  float maxValue = 1.0 + 1.0/turnProportion;
-
-  *out_vitesse_M1 = (in_vitesse + in_direction / turnProportion) / maxValue / 2.0 / 100 * 255 ;
-  *out_vitesse_M2 = (in_vitesse - in_direction / turnProportion) / maxValue / 2.0 / 100 * 255;
-
-  *out_vitesse_M1 = (255 / 100 ) * *out_vitesse_M1 * 60 / 100;
-  *out_vitesse_M2 = (255 / 100 ) * *out_vitesse_M2 * 60 / 100;
-  *out_vitesse_M3 = *out_vitesse_M1;
-  *out_vitesse_M4 = *out_vitesse_M2;
-  
-}
-
 void conversion_3M_holonome(float in_vitesse, float in_direction, float in_slide, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3)
 {
   
@@ -125,63 +106,6 @@ void conversion_3M_holonome(float in_vitesse, float in_direction, float in_slide
   *out_vitesse_M3 = *out_vitesse_M3 * coeff;
   
 }
-
-
-void conversion_4M_normalise(float in_vitesse, float in_direction, float direction_lateral, float *out_vitesse_M1, float *out_vitesse_M2, float *out_vitesse_M3, float *out_vitesse_M4)
-{
-  
-  float turnProportion = 2;
-  float pourcentage_puissance = 0.6;
-  float min = 0;
-  
-  if(-3.0 < in_vitesse && in_vitesse < 3.0) in_vitesse = 0.0;
-  if(-3.0 < in_direction && in_direction < 3.0) in_direction = 0.0;
-  if(in_vitesse == 0 && in_direction == 0) min = 0;
-
-  *out_vitesse_M1 = (in_vitesse - in_direction / turnProportion + direction_lateral);
-  *out_vitesse_M2 = (in_vitesse + in_direction / turnProportion - direction_lateral);
-  *out_vitesse_M3 = (in_vitesse + in_direction / turnProportion + direction_lateral);
-  *out_vitesse_M4 = (in_vitesse - in_direction / turnProportion - direction_lateral);
-  Serial.print("A: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-
-  if(abs(*out_vitesse_M1) > 100 || abs(*out_vitesse_M2) > 100)
-  {
-    float max = max(abs(*out_vitesse_M1), abs(*out_vitesse_M2));
-    float max2 = max(abs(*out_vitesse_M3), abs(*out_vitesse_M4));
-    max = max(abs(max), abs(max2));
-    
-    *out_vitesse_M1 = *out_vitesse_M1 / max * 100;
-    *out_vitesse_M2 = *out_vitesse_M2 / max * 100;
-    *out_vitesse_M3 = *out_vitesse_M3 / max * 100;
-    *out_vitesse_M4 = *out_vitesse_M4 / max * 100;
-    Serial.print(" A: MAX:"); 
-    Serial.print(max);  
-  }
-  Serial.print(" B: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-
-  *out_vitesse_M1 = (255.0 / 100.0 ) * *out_vitesse_M1 * pourcentage_puissance;
-  *out_vitesse_M2 = (255.0 / 100.0 ) * *out_vitesse_M2 * pourcentage_puissance;
-  *out_vitesse_M3 = (255.0 / 100.0 ) * *out_vitesse_M3 * pourcentage_puissance;
-  *out_vitesse_M4 = (255.0 / 100.0 ) * *out_vitesse_M4 * pourcentage_puissance;
- 
-  Serial.print(" C: out_vitesse_M1:"); 
-  Serial.print(*out_vitesse_M1);
-//  Serial.print(",");
-  Serial.print(",out_vitesse_M2:"); 
-  Serial.print(*out_vitesse_M2);
-  Serial.println("");
- 
- }
-
-
 
 void commande( float throttle_M1, float throttle_M2, float throttle_M3, float throttle_M4 )
 {
@@ -229,7 +153,6 @@ void commande( float throttle_M1, float throttle_M2, float throttle_M3, float th
 
   analogWrite(borneAvENA, abs(throttle_M1));
   analogWrite(borneAvENB, abs(throttle_M2));
-
   analogWrite(borneArENA, abs(throttle_M3));
 //  analogWrite(borneArENB, abs(throttle_M4));
 }
@@ -238,24 +161,23 @@ void commande( float throttle_M1, float throttle_M2, float throttle_M3, float th
 void loop()
 {
   //lecture commandes
-  vitesse = control.getThrottle();
-  direction = control.getSteering();
+  vitesse           = control.getThrottle();
+  direction         = control.getSteering();
   direction_lateral = control.getLatSteering();
   sw5 = control.getSW5();
   sw6 = control.getSW6();
   sw7 = control.getSW7();
   sw8 = control.getSW8();
 
-  //conversion_4M_normalise(vitesse, direction, -direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
   conversion_3M_holonome(vitesse, -direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3 );
-  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
-  //commande(0, 0, 0, 0);
   vitesse_M4 = 0;
+  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
 
-  control.debugInterrupt();
- 
+
+//  control.debugInterrupt();
+  //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
- delay(100);
+ delay(10);
 
 }

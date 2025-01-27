@@ -56,14 +56,14 @@ int RCChannel::getPinValue() const {
 float RCChannel::getValue() {
   float temp = end - zero_timing;
 	if(channelType == Channel_type::TYPE_PROPORTIONNEL){
-    if (temp > 2) {
+    if (temp > 0) {
       return temp * max_coeff;
     }
-    else if (temp < -2){
+    else if (temp < 0){
       return temp * min_coeff;
     }
-    else
-      return 0;
+//    else
+//      return 0;
   } else if(channelType == Channel_type::TYPE_SWITCH_2_POSITIONS){
     if(temp < 0 && abs(temp) > (amplitude / 5) )
       return -amplitude;
