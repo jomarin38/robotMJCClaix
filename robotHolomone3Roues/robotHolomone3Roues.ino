@@ -220,10 +220,10 @@ void loop()
   }
 #endif //CALIBRATION
 
-//  control.debugInterrupt();
+ // control.debugInterrupt();
   //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
- delay(10);
+ delay(100);
 
 }
