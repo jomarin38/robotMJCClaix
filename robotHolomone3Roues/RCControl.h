@@ -17,7 +17,7 @@ private:
 	
 	
 public:
-    RCChannel rchannel2[NB_CHANNELS];
+    RCChannel rchannels[NB_CHANNELS];
 	
 		RCControl();
 
@@ -28,8 +28,6 @@ public:
 
     void initializeFromEEPROM();
     void writeToEEPROM();
-		    
-
 
     void debugInterrupt();
     void debugCalibration();

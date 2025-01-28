@@ -27,3 +27,10 @@
 #define SW6_PIN               13
 #define SW7_PIN               15
 #define SW8_PIN               16
+
+//GPIO vers pinces
+#define OUT_CHANNEL_0 0
+#define OUT_CHANNEL_1 1
+#define OUT_CHANNEL_2 3
+#define OUT_CHANNEL_3 19
+

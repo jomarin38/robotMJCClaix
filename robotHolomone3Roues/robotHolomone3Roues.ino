@@ -5,7 +5,7 @@
 #include "RCControl.h"
 #include "pinsout.h"
 
-
+//#define CALIBRATION
 RCControl control;
 
 
@@ -32,10 +32,11 @@ void setup()
   //Serial.println("Programme Stepper version du 17/03/2023");
 
   control.init();
-  // Configuration de toutes les pins de l'Arduino en "sortie" (car elles attaquent les entrées du module L298N)
+  // Configuration de toutes les pins de l'Arduino en "sortie" (car elles attaquent les entrées des modules L298N)
   pinMode(borneAvENA, OUTPUT);
   pinMode(borneAvIN1, OUTPUT);
   pinMode(borneAvIN2, OUTPUT);
+
   pinMode(borneAvIN3, OUTPUT);
   pinMode(borneAvIN4, OUTPUT);
   pinMode(borneAvENB, OUTPUT);
@@ -43,6 +44,7 @@ void setup()
   pinMode(borneArENA, OUTPUT);
   pinMode(borneArIN1, OUTPUT);
   pinMode(borneArIN2, OUTPUT);
+  //pins moteurs 4
 //  pinMode(borneArIN3, OUTPUT);
 //  pinMode(borneArIN4, OUTPUT);
 //  pinMode(borneArENB, OUTPUT);
@@ -51,10 +53,28 @@ void setup()
   analogWrite(borneAvENB, 0);
 
   analogWrite(borneArENA, 0);
+  //pwm moteur 4
 // analogWrite(borneArENB, 0);
 
+//GPIO vers pinces 
+#ifndef CALIBRATION
+//si on est en calibration, on a besoin de la liaison série
+  pinMode(OUT_CHANNEL_0, OUTPUT);
+  analogWrite(OUT_CHANNEL_0, 0);
+
+  pinMode(OUT_CHANNEL_1, OUTPUT);
+  analogWrite(OUT_CHANNEL_1, 0);
+#endif //CALIBRATION
+
+  pinMode(OUT_CHANNEL_2, OUTPUT);
+  analogWrite(OUT_CHANNEL_2, 0);
+
+  pinMode(OUT_CHANNEL_3, OUTPUT);
+  analogWrite(OUT_CHANNEL_3, 0);
+
+
 //  if (digitalRead(rcCalibrationPin) == HIGH) {
-  if (0) {
+  #ifdef CALIBRATION
   
     Serial.println("Beginning calibration process ...");
     delay(20);
@@ -72,14 +92,12 @@ void setup()
     control.writeToEEPROM();
     Serial.println("EEPROM backup finished.");
 		delay(2000);
-
-  }
-  else {
+#else
     //Serial.println("reading the calibration settings.");
     control.initializeFromEEPROM();
     control.debugCalibration();
     delay(1000);
-  }
+#endif
 
   delay(1000);
 }
@@ -173,6 +191,34 @@ void loop()
   vitesse_M4 = 0;
   commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
 
+
+  if(sw5 == -100){
+      analogWrite(OUT_CHANNEL_0, 0);
+  }
+  else {
+      analogWrite(OUT_CHANNEL_0, 1);
+  }
+
+  if(sw6 == -100){
+      analogWrite(OUT_CHANNEL_1, 0);
+  }
+  else {
+      analogWrite(OUT_CHANNEL_1, 1);
+  }
+  #ifndef CALIBRATION
+  if(sw7 == -100){
+      analogWrite(OUT_CHANNEL_2, 0);
+  }
+  else {
+      analogWrite(OUT_CHANNEL_2, 1);
+  }
+  if(sw8 == -100){
+      analogWrite(OUT_CHANNEL_3, 0);
+  }
+  else {
+      analogWrite(OUT_CHANNEL_3, 1);
+  }
+#endif //CALIBRATION
 
 //  control.debugInterrupt();
   //debogue les valeurs envoye aux moteurs

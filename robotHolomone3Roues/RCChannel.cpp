@@ -1,6 +1,4 @@
 #include "RCChannel.h"
-//#include "PinChangeInt.h" // for RC reciver
-
 
 // Constructeur
 RCChannel::RCChannel(char initialChannelTypeValue, char initialPinValue)
@@ -8,11 +6,11 @@ RCChannel::RCChannel(char initialChannelTypeValue, char initialPinValue)
 
 
 void RCChannel::init(){
-//  pinMode(pinValue, INPUT);
-//	PCintPort::attachInterrupt(pinValue, calc,CHANGE);
+  //1500 valeur du zero avec RC MJC 
   min_timing = 1500;
 }
 
+//attention fonction appelée dans le handler d interruptions
 void RCChannel::calcInterrupt()
 {
 	 //Serial.println("in up down here");
@@ -46,7 +44,7 @@ void RCChannel::calc(){
 int RCChannel::getChannelNumber() const {
     return channelNumber;
 }
-
+// Getter pour le numéro du GPIO
 int RCChannel::getPinValue() const {
     return pinValue;
 }
@@ -62,8 +60,6 @@ float RCChannel::getValue() {
     else if (temp < 0){
       return temp * min_coeff;
     }
-//    else
-//      return 0;
   } else if(channelType == Channel_type::TYPE_SWITCH_2_POSITIONS){
     if(temp < 0 && abs(temp) > (amplitude / 5) )
       return -amplitude;
@@ -100,15 +96,16 @@ float RCChannel::getMaxCoeff(){
     return max_coeff;
 }
 
-
 float RCChannel::getEnd() {
     return end;
 }
-
-// Setter pour la valeur de la voie
-void RCChannel::setValue(float newValue) {
-    value = newValue;
+//setGeneric
+void RCChannel::setValues(int newChannelNumberValue, char newPinValue, char newChannelTypeValue) {
+  setPinValue(newPinValue);
+  setChannelType(newChannelTypeValue);
+  setChannelNumber(newChannelNumberValue);
 }
+
 // Setter pour la valeur de la pin/GPIO
 void RCChannel::setPinValue(char newValue) {
     pinValue = newValue;
@@ -118,12 +115,6 @@ void RCChannel::setChannelType(char newValue) {
 }
 void RCChannel::setChannelNumber(int newValue) {
     channelNumber = newValue;
-}
-
-
-// Réinitialise la voie à sa valeur par défaut
-void RCChannel::reset() {
-    value = 0.0;
 }
 
 void RCChannel::calibrateZero(){

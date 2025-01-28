@@ -49,14 +49,12 @@ public:
   
 
     // Setters
-    void setValue(float newValue);
+    void setValues(int newChannelNumberValue, char newPinValue, char newChannelTypeValue);
     void setPinValue(char newValue);
     void setChannelType(char newValue);
-
     void setChannelNumber(int newValue);
 
-    // Autres méthodes (exemple)
-    void reset();  // Réinitialise la voie à sa valeur par défaut
+    //calibrations
     void calibrateZero();
     void calibrateZeroAverage(int nSamples);
     void calibrateInputs();
