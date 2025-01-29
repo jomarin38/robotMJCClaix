@@ -209,7 +209,7 @@ void loop()
   direction = control.getSteering();
   direction_lateral = control.getLatSteering();
   conversion_4M_normalise(vitesse, direction, direction_lateral, &vitesse_M1, &vitesse_M2, &vitesse_M3, &vitesse_M4 );
-  commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
+  //commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
 
   Serial.print("vitesse:"); 
   Serial.print(vitesse);

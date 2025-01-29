@@ -8,6 +8,7 @@ RCChannel::RCChannel(char initialChannelTypeValue, char initialPinValue)
 void RCChannel::init(){
   //1500 valeur du zero avec RC MJC 
   min_timing = 1500;
+  pinMode(channelNumber, INPUT);
 }
 
 //attention fonction appelée dans le handler d interruptions

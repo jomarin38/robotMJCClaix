@@ -87,7 +87,7 @@ void RCControl::init()
   for(int i = 0; i < nbChannels; i++){
     rchannels[i].init();
   }
-
+/*
   PCintPort::attachInterrupt(rchannels[0].getPinValue(), calcAvantArriere,CHANGE);
   PCintPort::attachInterrupt(rchannels[1].getPinValue(), calcGaucheDroite,CHANGE);
   PCintPort::attachInterrupt(rchannels[2].getPinValue(), calcLateralGaucheDroite,CHANGE);
@@ -95,6 +95,14 @@ void RCControl::init()
   PCintPort::attachInterrupt(rchannels[4].getPinValue(), calcSW6,CHANGE);
   PCintPort::attachInterrupt(rchannels[5].getPinValue(), calcSW7,CHANGE);
   PCintPort::attachInterrupt(rchannels[6].getPinValue(), calcSW8,CHANGE);
+  */
+  attachInterrupt(digitalPinToInterrupt(rchannels[0].getPinValue()), calcAvantArriere,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[1].getPinValue()), calcGaucheDroite,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[2].getPinValue()), calcLateralGaucheDroite,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[3].getPinValue()), calcSW5,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[4].getPinValue()), calcSW6,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[5].getPinValue()), calcSW7,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rchannels[6].getPinValue()), calcSW8,CHANGE);
 }
 
 //***********************************************************************

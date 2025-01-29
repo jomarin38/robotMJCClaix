@@ -69,8 +69,8 @@ void setup()
   pinMode(OUT_CHANNEL_2, OUTPUT);
   analogWrite(OUT_CHANNEL_2, 0);
 
-  pinMode(OUT_CHANNEL_3, OUTPUT);
-  analogWrite(OUT_CHANNEL_3, 0);
+  // pinMode(OUT_CHANNEL_3, OUTPUT);
+  // analogWrite(OUT_CHANNEL_3, 0);
 
 
 //  if (digitalRead(rcCalibrationPin) == HIGH) {
@@ -212,15 +212,15 @@ void loop()
   else {
       analogWrite(OUT_CHANNEL_2, 1);
   }
-  if(sw8 == -100){
-      analogWrite(OUT_CHANNEL_3, 0);
-  }
-  else {
-      analogWrite(OUT_CHANNEL_3, 1);
-  }
+  // if(sw8 == -100){
+  //     analogWrite(OUT_CHANNEL_3, 0);
+  // }
+  // else {
+  //     analogWrite(OUT_CHANNEL_3, 1);
+  // }
 #endif //CALIBRATION
 
- // control.debugInterrupt();
+  control.debugInterrupt();
   //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
