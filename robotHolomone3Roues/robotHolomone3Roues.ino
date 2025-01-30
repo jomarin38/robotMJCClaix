@@ -57,17 +57,17 @@ void setup()
 // analogWrite(borneArENB, 0);
 
 //GPIO vers pinces 
-#ifndef CALIBRATION
-//si on est en calibration, on a besoin de la liaison série
-  pinMode(OUT_CHANNEL_0, OUTPUT);
-  analogWrite(OUT_CHANNEL_0, 0);
+  pinMode(OUT_CHANNEL_0_1, OUTPUT);
+  digitalWrite(OUT_CHANNEL_0_1, 0);
+
+  pinMode(OUT_CHANNEL_0_2, OUTPUT);
+  digitalWrite(OUT_CHANNEL_0_2, 0);
 
   pinMode(OUT_CHANNEL_1, OUTPUT);
-  analogWrite(OUT_CHANNEL_1, 0);
-#endif //CALIBRATION
+  digitalWrite(OUT_CHANNEL_1, 0);
 
   pinMode(OUT_CHANNEL_2, OUTPUT);
-  analogWrite(OUT_CHANNEL_2, 0);
+  digitalWrite(OUT_CHANNEL_2, 0);
 
   // pinMode(OUT_CHANNEL_3, OUTPUT);
   // analogWrite(OUT_CHANNEL_3, 0);
@@ -193,24 +193,29 @@ void loop()
 
 
   if(sw5 == -100){
-      analogWrite(OUT_CHANNEL_0, 0);
-  }
+      digitalWrite(OUT_CHANNEL_0_1, LOW);
+      digitalWrite(OUT_CHANNEL_0_2, LOW);
+  } else if (sw5 == 0) {
+      digitalWrite(OUT_CHANNEL_0_1, HIGH);
+      digitalWrite(OUT_CHANNEL_0_2, LOW);
+  } 
   else {
-      analogWrite(OUT_CHANNEL_0, 1);
+      digitalWrite(OUT_CHANNEL_0_1, HIGH);
+      digitalWrite(OUT_CHANNEL_0_2, HIGH);
   }
 
   if(sw6 == -100){
-      analogWrite(OUT_CHANNEL_1, 0);
+      digitalWrite(OUT_CHANNEL_1, LOW);
   }
   else {
-      analogWrite(OUT_CHANNEL_1, 1);
+      digitalWrite(OUT_CHANNEL_1, HIGH);
   }
-  #ifndef CALIBRATION
+
   if(sw7 == -100){
-      analogWrite(OUT_CHANNEL_2, 0);
+      digitalWrite(OUT_CHANNEL_2, LOW);
   }
   else {
-      analogWrite(OUT_CHANNEL_2, 1);
+      digitalWrite(OUT_CHANNEL_2, HIGH);
   }
   // if(sw8 == -100){
   //     analogWrite(OUT_CHANNEL_3, 0);
@@ -218,9 +223,12 @@ void loop()
   // else {
   //     analogWrite(OUT_CHANNEL_3, 1);
   // }
-#endif //CALIBRATION
 
   control.debugInterrupt();
+  Serial.print("sw5: \t| "); Serial.print("sw6: \t| "); Serial.println("sw7: \t|"); 
+  Serial.print(sw5); Serial.print("\t\t| ");Serial.print(sw6);Serial.print("\t\t| "); Serial.println(sw7);
+ 
+
   //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
