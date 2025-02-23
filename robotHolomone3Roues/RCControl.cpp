@@ -7,6 +7,18 @@
 extern RCControl control;
 
 
+// uint32_t t1 = 0;
+// uint32_t t2 = 0;
+// uint32_t t3 = 0;
+
+
+// void calcTickAvGauche()
+// {
+//     		t2 = t1; 
+//         t1 = micros();
+//         t3 = t1 -t2;
+// }
+
 //------------------------------------------------------
 // handlers d interruptions
 //****************************************************************
@@ -87,7 +99,8 @@ void RCControl::init()
   for(int i = 0; i < nbChannels; i++){
     rchannels[i].init();
   }
-/*
+//#define  PIN_CHANGE_INTERRUPT
+#ifdef PIN_CHANGE_INTERRUPT
   PCintPort::attachInterrupt(rchannels[0].getPinValue(), calcAvantArriere,CHANGE);
   PCintPort::attachInterrupt(rchannels[1].getPinValue(), calcGaucheDroite,CHANGE);
   PCintPort::attachInterrupt(rchannels[2].getPinValue(), calcLateralGaucheDroite,CHANGE);
@@ -95,14 +108,21 @@ void RCControl::init()
   PCintPort::attachInterrupt(rchannels[4].getPinValue(), calcSW6,CHANGE);
   PCintPort::attachInterrupt(rchannels[5].getPinValue(), calcSW7,CHANGE);
   PCintPort::attachInterrupt(rchannels[6].getPinValue(), calcSW8,CHANGE);
-  */
+#else
+  //REAL INTERRUPT
   attachInterrupt(digitalPinToInterrupt(rchannels[0].getPinValue()), calcAvantArriere,CHANGE);
   attachInterrupt(digitalPinToInterrupt(rchannels[1].getPinValue()), calcGaucheDroite,CHANGE);
   attachInterrupt(digitalPinToInterrupt(rchannels[2].getPinValue()), calcLateralGaucheDroite,CHANGE);
   attachInterrupt(digitalPinToInterrupt(rchannels[3].getPinValue()), calcSW5,CHANGE);
   attachInterrupt(digitalPinToInterrupt(rchannels[4].getPinValue()), calcSW6,CHANGE);
   attachInterrupt(digitalPinToInterrupt(rchannels[5].getPinValue()), calcSW7,CHANGE);
-  attachInterrupt(digitalPinToInterrupt(rchannels[6].getPinValue()), calcSW8,CHANGE);
+//  attachInterrupt(digitalPinToInterrupt(rchannels[6].getPinValue()), calcSW8,CHANGE);
+  PCintPort::attachInterrupt(rchannels[6].getPinValue(), calcSW8,CHANGE);
+//TICK MOTEUR
+//  pinMode(TICK_AVANT_GAUCHE, INPUT);
+//  PCintPort::attachInterrupt(TICK_AVANT_GAUCHE, calcTickAvGauche,RISING);
+
+#endif
 }
 
 //***********************************************************************
@@ -199,19 +219,19 @@ void RCControl::debugCalibration()
   }
   Serial.println("");
 
-  for(int i =0; i<NB_CHANNELS; i++){
+  for(int i=0; i<NB_CHANNELS; i++){
     Serial.print((int)rchannels[i].getMinTiming());Serial.print(" "); 
     Serial.print((int)rchannels[i].getZeroTiming());Serial.print(" "); 
     Serial.print((int)rchannels[i].getMaxTiming());Serial.print("\t\t | "); 
   }
   Serial.println("");
   Serial.println("[min_coeff, max_coeff]");
-  for(int i =0; i<NB_CHANNELS; i++){
+  for(int i=0; i<NB_CHANNELS; i++){
     Serial.print(" ");Serial.print(i);Serial.print("\t\t | ");     
   }
   Serial.println("");
 
-  for(int i =0; i<NB_CHANNELS; i++){
+  for(int i=0; i<NB_CHANNELS; i++){
     Serial.print(rchannels[i].getMinCoeff());Serial.print(" "); Serial.print(rchannels[i].getMaxCoeff());Serial.print("\t | "); 
   }
 

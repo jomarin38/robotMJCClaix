@@ -56,18 +56,20 @@ void setup()
   //pwm moteur 4
 // analogWrite(borneArENB, 0);
 
+
+
 //GPIO vers pinces 
-#ifndef CALIBRATION
-//si on est en calibration, on a besoin de la liaison série
-  pinMode(OUT_CHANNEL_0, OUTPUT);
-  analogWrite(OUT_CHANNEL_0, 0);
+  pinMode(OUT_CHANNEL_0_0, OUTPUT);
+  digitalWrite(OUT_CHANNEL_0_0, 0);
+
+  pinMode(OUT_CHANNEL_0_1, OUTPUT);
+  digitalWrite(OUT_CHANNEL_0_1, 0);
 
   pinMode(OUT_CHANNEL_1, OUTPUT);
-  analogWrite(OUT_CHANNEL_1, 0);
-#endif //CALIBRATION
+  digitalWrite(OUT_CHANNEL_1, 0);
 
   pinMode(OUT_CHANNEL_2, OUTPUT);
-  analogWrite(OUT_CHANNEL_2, 0);
+  digitalWrite(OUT_CHANNEL_2, 0);
 
   // pinMode(OUT_CHANNEL_3, OUTPUT);
   // analogWrite(OUT_CHANNEL_3, 0);
@@ -91,7 +93,7 @@ void setup()
 
     control.writeToEEPROM();
     Serial.println("EEPROM backup finished.");
-		delay(2000);
+		delay(20000);
 #else
     //Serial.println("reading the calibration settings.");
     control.initializeFromEEPROM();
@@ -192,38 +194,50 @@ void loop()
   commande(vitesse_M1, vitesse_M2, vitesse_M3, vitesse_M4);
 
 
+  
   if(sw5 == -100){
-      analogWrite(OUT_CHANNEL_0, 0);
+      digitalWrite(OUT_CHANNEL_0_0, LOW);
+      digitalWrite(OUT_CHANNEL_0_1, LOW);
+  } else if (sw5 == 0){
+      digitalWrite(OUT_CHANNEL_0_0, LOW);
+      digitalWrite(OUT_CHANNEL_0_1, HIGH);
   }
   else {
-      analogWrite(OUT_CHANNEL_0, 1);
+      digitalWrite(OUT_CHANNEL_0_0, HIGH);
+      digitalWrite(OUT_CHANNEL_0_1, HIGH);
   }
 
   if(sw6 == -100){
-      analogWrite(OUT_CHANNEL_1, 0);
+      digitalWrite(OUT_CHANNEL_1, LOW);
   }
   else {
-      analogWrite(OUT_CHANNEL_1, 1);
+      digitalWrite(OUT_CHANNEL_1, HIGH);
   }
-  #ifndef CALIBRATION
+
   if(sw7 == -100){
-      analogWrite(OUT_CHANNEL_2, 0);
+      digitalWrite(OUT_CHANNEL_2, LOW);
   }
   else {
-      analogWrite(OUT_CHANNEL_2, 1);
+      digitalWrite(OUT_CHANNEL_2, HIGH);
   }
-  // if(sw8 == -100){
-  //     analogWrite(OUT_CHANNEL_3, 0);
-  // }
-  // else {
-  //     analogWrite(OUT_CHANNEL_3, 1);
-  // }
-#endif //CALIBRATION
+  if(sw8 == -100){
+      digitalWrite(OUT_CHANNEL_3_0, LOW);
+      digitalWrite(OUT_CHANNEL_3_0, LOW);
+  } else if (sw8 == 0){
+      digitalWrite(OUT_CHANNEL_3_0, LOW);
+      digitalWrite(OUT_CHANNEL_3_1, HIGH);
+  }
+  else {
+      digitalWrite(OUT_CHANNEL_3_0, HIGH);
+      digitalWrite(OUT_CHANNEL_3_1, HIGH);
+  }
 
   control.debugInterrupt();
+  Serial.println(sw8);
+ // Serial.print(sw5); Serial.print("\t\t| ");Serial.print(sw6);Serial.print("\t\t| "); Serial.print(sw7);Serial.print("\t\t| "); Serial.println(sw8);
   //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
- delay(100);
+ delay(200);
 
 }

@@ -2,13 +2,15 @@
 
 // Constructeur
 RCChannel::RCChannel(char initialChannelTypeValue, char initialPinValue)
-    : channelType(initialChannelTypeValue), pinValue(initialPinValue) {}
+    : channelType(initialChannelTypeValue), pinValue(initialPinValue),channelNumber(255) {}
 
 
 void RCChannel::init(){
   //1500 valeur du zero avec RC MJC 
   min_timing = 1500;
-  pinMode(channelNumber, INPUT);
+  if(channelNumber != 255){
+    pinMode(channelNumber, INPUT);
+  }
 }
 
 //attention fonction appelée dans le handler d interruptions
@@ -62,7 +64,8 @@ float RCChannel::getValue() {
       return temp * min_coeff;
     }
   } else if(channelType == Channel_type::TYPE_SWITCH_2_POSITIONS){
-    if(temp < 0 && abs(temp) > (amplitude / 5) )
+//    if(temp < 0 && abs(temp) > (amplitude / 5) )
+    if(end < 1500 )
       return -amplitude;
     else
       return amplitude;    

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "RCChannel.h"
-#define NB_CHANNELS 8
+#define NB_CHANNELS 7
 // NB_CHANNELS * [zero, min_coeff, max_coeff]
 struct CalibrationData {
   float data[NB_CHANNELS * 3];

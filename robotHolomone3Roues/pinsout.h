@@ -24,14 +24,19 @@
 #define UP_DOWN_IN_PIN        18//4
 #define LAT_LEFT_RIGHT_PIN    2
 #define SW5_PIN               19//A1//14
-#define SW6_PIN               13
-#define SW7_PIN               20//15
-#define SW8_PIN               21//16
+#define SW6_PIN               20//13
+#define SW7_PIN               21//20//15
+#define SW8_PIN               13//21//16
+
+//tick moteur
+#define TICK_AVANT_GAUCHE     63
 
 //GPIO vers pinces
-#define OUT_CHANNEL_0 37
+#define OUT_CHANNEL_0_0 35
+#define OUT_CHANNEL_0_1 37
 #define OUT_CHANNEL_1 39
 #define OUT_CHANNEL_2 41//3
-//#define OUT_CHANNEL_3 //19
+#define OUT_CHANNEL_3_0 29
+#define OUT_CHANNEL_3_1 31
 
 //2 3 18 19 20 21
