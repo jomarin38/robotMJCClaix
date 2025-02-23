@@ -20,8 +20,8 @@
 //#define borneArENB        3      // On associe la borne "ENB" du L298N à la pin D5 de l'arduino
 
 //radio
-#define LEFT_RIGHT_IN_PIN     3//6
 #define UP_DOWN_IN_PIN        18//4
+#define LEFT_RIGHT_IN_PIN     3//6
 #define LAT_LEFT_RIGHT_PIN    2
 #define SW5_PIN               19//A1//14
 #define SW6_PIN               20//13
@@ -31,12 +31,17 @@
 //tick moteur
 #define TICK_AVANT_GAUCHE     63
 
+
+#define SW6_PIN               20
+#define SW7_PIN               21////15
+#define SW8_PIN               13//16
+
 //GPIO vers pinces
-#define OUT_CHANNEL_0_0 35
 #define OUT_CHANNEL_0_1 37
-#define OUT_CHANNEL_1 39
-#define OUT_CHANNEL_2 41//3
-#define OUT_CHANNEL_3_0 29
-#define OUT_CHANNEL_3_1 31
+#define OUT_CHANNEL_0_2 35
+#define OUT_CHANNEL_1   39
+#define OUT_CHANNEL_2   41//3
+#define OUT_CHANNEL_3_1 29
+#define OUT_CHANNEL_3_2 31
 
 //2 3 18 19 20 21

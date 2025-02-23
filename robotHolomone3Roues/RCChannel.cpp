@@ -65,7 +65,7 @@ float RCChannel::getValue() {
     }
   } else if(channelType == Channel_type::TYPE_SWITCH_2_POSITIONS){
 //    if(temp < 0 && abs(temp) > (amplitude / 5) )
-    if(end < 1500 )
+    if( end < 1500 )
       return -amplitude;
     else
       return amplitude;    
@@ -105,9 +105,9 @@ float RCChannel::getEnd() {
 }
 //setGeneric
 void RCChannel::setValues(int newChannelNumberValue, char newPinValue, char newChannelTypeValue) {
+  setChannelNumber(newChannelNumberValue);
   setPinValue(newPinValue);
   setChannelType(newChannelTypeValue);
-  setChannelNumber(newChannelNumberValue);
 }
 
 // Setter pour la valeur de la pin/GPIO

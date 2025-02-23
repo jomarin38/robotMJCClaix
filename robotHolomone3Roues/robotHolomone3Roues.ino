@@ -59,11 +59,11 @@ void setup()
 
 
 //GPIO vers pinces 
-  pinMode(OUT_CHANNEL_0_0, OUTPUT);
-  digitalWrite(OUT_CHANNEL_0_0, 0);
-
   pinMode(OUT_CHANNEL_0_1, OUTPUT);
   digitalWrite(OUT_CHANNEL_0_1, 0);
+
+  pinMode(OUT_CHANNEL_0_2, OUTPUT);
+  digitalWrite(OUT_CHANNEL_0_2, 0);
 
   pinMode(OUT_CHANNEL_1, OUTPUT);
   digitalWrite(OUT_CHANNEL_1, 0);
@@ -196,15 +196,15 @@ void loop()
 
   
   if(sw5 == -100){
-      digitalWrite(OUT_CHANNEL_0_0, LOW);
       digitalWrite(OUT_CHANNEL_0_1, LOW);
-  } else if (sw5 == 0){
-      digitalWrite(OUT_CHANNEL_0_0, LOW);
+      digitalWrite(OUT_CHANNEL_0_2, LOW);
+  } else if (sw5 == 0) {
       digitalWrite(OUT_CHANNEL_0_1, HIGH);
-  }
+      digitalWrite(OUT_CHANNEL_0_2, LOW);
+  } 
   else {
-      digitalWrite(OUT_CHANNEL_0_0, HIGH);
       digitalWrite(OUT_CHANNEL_0_1, HIGH);
+      digitalWrite(OUT_CHANNEL_0_2, HIGH);
   }
 
   if(sw6 == -100){
@@ -221,20 +221,22 @@ void loop()
       digitalWrite(OUT_CHANNEL_2, HIGH);
   }
   if(sw8 == -100){
-      digitalWrite(OUT_CHANNEL_3_0, LOW);
-      digitalWrite(OUT_CHANNEL_3_0, LOW);
+      digitalWrite(OUT_CHANNEL_3_1, LOW);
+      digitalWrite(OUT_CHANNEL_3_2, LOW);
   } else if (sw8 == 0){
-      digitalWrite(OUT_CHANNEL_3_0, LOW);
-      digitalWrite(OUT_CHANNEL_3_1, HIGH);
+      digitalWrite(OUT_CHANNEL_3_1, LOW);
+      digitalWrite(OUT_CHANNEL_3_2, HIGH);
   }
   else {
-      digitalWrite(OUT_CHANNEL_3_0, HIGH);
       digitalWrite(OUT_CHANNEL_3_1, HIGH);
+      digitalWrite(OUT_CHANNEL_3_2, HIGH);
   }
 
   control.debugInterrupt();
   Serial.println(sw8);
  // Serial.print(sw5); Serial.print("\t\t| ");Serial.print(sw6);Serial.print("\t\t| "); Serial.print(sw7);Serial.print("\t\t| "); Serial.println(sw8);
+
+  control.debugInterrupt();
   //debogue les valeurs envoye aux moteurs
   // Serial.print(",vitesse_M1: \t| "); Serial.print("vitesse_M2: \t| "); Serial.println("vitesse_M3: \t|"); 
   // Serial.print(vitesse_M1); Serial.print("\t\t| ");Serial.print(vitesse_M2);Serial.print("\t\t| "); Serial.println(vitesse_M3);
